@@ -1,2 +1,66 @@
 # polito-api
 An open source API for Politecnico di Torino.
+
+### API implementate
+
+ - [ ] /annullaLezione.php
+ - [ ] /appelli.php
+ - [ ] /aule_libere.php
+ - [ ] /avvisi.php
+ - [ ] /biblioteca.php
+ - [ ] /booking_api.php
+ - [ ] /certifica_device.php
+ - [ ] /conferma_otp.php
+ - [ ] /consegna_elaborato.php
+ - [ ] /covid.php
+ - [ ] /cpd_docente.php
+ - [ ] /cpd.php
+ - [ ] /didattica_in_aula.php
+ - [ ] /didattica_in_aula_polling.php
+ - [ ] /docente.php
+ - [ ] /download.php
+ - [ ] /elenco_assenti.php
+ - [ ] /esami.php
+ - [ ] /goto_webmail.php
+ - [ ] /goto_filavia.php
+ - [ ] /goto_virtualclassroom.php
+ - [ ] /green_pass.php
+ - [ ] /gtt_partenze.php
+ - [ ] /guida.php
+ - [ ] /invia_messaggio.php
+ - [ ] /lang.php
+ - [x] /login.php
+ - [ ] /logout.php
+ - [ ] /log_video.php
+ - [x] /mail.php
+ - [ ] /materia_dettaglio.php
+ - [ ] /materiale_comune.php
+ - [ ] /messaggi.php
+ - [ ] /news_dettaglio.php
+ - [ ] /news.php
+ - [ ] /offerta_formativa_dettaglio.php
+ - [ ] /offerta_lavoro_dettaglio.php
+ - [ ] /offerte_lavoro.php
+ - [ ] /orari_lezioni_dett.php
+ - [ ] /orari_lezioni.php
+ - [ ] /orari_lezioni_pub.php
+ - [ ] /percorsi_formativi.php
+ - [ ] /piano_studi.php
+ - [ ] /ping.php
+ - [ ] /pref_notifiche.php
+ - [ ] /prenota.php
+ - [x] /register.php
+ - [ ] /registri.php
+ - [ ] /reglezioni.php
+ - [ ] /rid.php
+ - [ ] /rubrica.php
+ - [ ] /sedi.php
+ - [ ] /segnalazione.php
+ - [x] /studente.php
+ - [ ] /testnotifica.php
+ - [ ] /ticket.php
+ - [x] /valutazioni.php
+ - [ ] /verify.php
+ - [ ] /version.php
+ - [ ] /videolezione_dettaglio.php
+ - [ ] /websocket.php
