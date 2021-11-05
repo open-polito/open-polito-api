@@ -8,13 +8,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CapacitorSet/polito-api.git"
+    "url": "git+https://github.com/Open-Polito/open-polito-api.git"
   },
   "author": "",
   "bugs": {
-    "url": "https://github.com/CapacitorSet/polito-api/issues"
+    "url": "https://github.com/github.com/Open-Polito/open-polito-api/issues"
   },
-  "homepage": "https://github.com/CapacitorSet/polito-api#readme",
+  "homepage": "https://github.com/github.com/Open-Polito/open-polito-api#readme",
   "dependencies": {
     "node-fetch": "^3.0.0",
     "typescript": "^4.4.3",

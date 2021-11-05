@@ -1,5 +1,5 @@
-# polito-api
-An open source API for Politecnico di Torino.
+# open-polito-api
+An open source, **unofficial** API for Politecnico di Torino.
 
 ### API implementate
 
