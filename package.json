@@ -1,5 +1,5 @@
 {
-  "name": "polito-api",
+  "name": "open-polito-api",
   "version": "1.0.0",
   "description": "An open source API for Politecnico di Torino.",
   "main": "index.js",
