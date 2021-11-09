@@ -1,11 +1,4 @@
-if (typeof fetch === "undefined") {
-    const _importDynamic = new Function('modulePath', 'return import(modulePath)')
-
-    async function fetch(...args) {
-        const { default: fetch } = await _importDynamic('node-fetch');
-        return fetch(...args);
-    }
-}
+const fetch = require("isomorphic-unfetch");
 
 export async function post(endpoint: string, data: any): Promise<any> {
     console.log("> POST " + endpoint);
