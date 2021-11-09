@@ -33,7 +33,7 @@ An open source, **unofficial** API for Politecnico di Torino.
  - [ ] /logout.php
  - [ ] /log_video.php
  - [x] /mail.php
- - [ ] /materia_dettaglio.php
+ - [x] /materia_dettaglio.php
  - [ ] /materiale_comune.php
  - [ ] /messaggi.php
  - [ ] /news_dettaglio.php

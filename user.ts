@@ -1,6 +1,7 @@
 import { checkError, post } from "./utils";
 import { EsameProvvisorio, EsameSostenuto, Libretto } from "./libretto";
-import { CaricoDidattico, Corso } from "./carico_didattico";
+import Corso from "./corso";
+import { CaricoDidattico } from "./carico_didattico";
 
 export default class User {
     uuid: string;
@@ -29,14 +30,9 @@ export default class User {
             stato: s.esplica_efi,
         } as EsameSostenuto));
         this.carico_didattico = new CaricoDidattico();
-        this.carico_didattico.corsi = vote_data.data.carico_didattico.map(c => ({
-            nome: c.nome_ins,
-            codice: c.cod_ins,
-            cfu: c.n_cfe,
-            id_incarico: c.id_inc_1,
-            categoria: c.categoria,
-            overbooking: c.overbooking == "N",
-        } as Corso));
+        this.carico_didattico.corsi = vote_data.data.carico_didattico.map(c => new Corso(
+            this.uuid, this.token, c.nome_ins, c.cod_ins, c.n_cfe, c.id_inc_1, c.categoria, c.overbooking == "N"
+        ));
 
         const prov_data = await post("valutazioni.php", { regID: this.uuid, token: this.token });
         checkError(prov_data);
