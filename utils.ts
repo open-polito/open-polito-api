@@ -17,5 +17,5 @@ export async function post(endpoint: string, data: any): Promise<any> {
 export async function checkError(data: {esito: object}) {
     for (const key in data.esito)
         if (data.esito[key].stato < 0)
-            throw new Error(`Esito negativo: ${key}=${data.esito[key].stato}`);
+            throw new Error(`Esito negativo: ${data.esito[key].error} (${key}=${data.esito[key].stato})`);
 }
