@@ -82,6 +82,7 @@ export default class Device {
         checkError(user_data);
 
         const user = new User();
+        token = user_data.data.login.token;
         user.uuid = this.uuid;
         user.token = token;
         user.anagrafica = {
