@@ -92,7 +92,6 @@ export default class Corso {
         else
             data = await this.device.post("materia_dettaglio.php", { cod_ins: this.codice });
         checkError(data);
-        console.log(util.inspect(data, { showHidden: false, depth: null, colors: true }));
         this.anno_accademico = data.data.info_corso.a_acc;
         const parts_anno = data.data.info_corso.periodo.split("-");
         if (parts_anno.length == 2) {
@@ -123,5 +122,18 @@ export default class Corso {
          * ]
          */
 
+    }
+
+    // Returns a download URL.
+    async download(file: File | Number): Promise<string> {
+        let code;
+        if (typeof file == "object") {
+            code = (file as File).code;
+        } else {
+            code = file;
+        }
+        const data = await this.device.post("download.php", { code })
+        checkError(data);
+        return data.data.directurl;
     }
 }
