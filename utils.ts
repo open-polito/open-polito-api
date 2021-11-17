@@ -1,7 +1,10 @@
 const fetch = require("isomorphic-unfetch");
 
+const DEBUG = false;
+
 export async function post(endpoint: string, data: any): Promise<any> {
-    console.log("> POST " + endpoint);
+    if (DEBUG)
+        console.log("> POST " + endpoint);
     const req: Response = await fetch("https://app.didattica.polito.it/" + endpoint, {
         "method": "POST",
         "headers": {
@@ -10,7 +13,8 @@ export async function post(endpoint: string, data: any): Promise<any> {
         "body": "data=" + encodeURIComponent(JSON.stringify(data)),
     });
     const ret = JSON.parse(await req.text());
-    // console.log("< ", ret);
+    if (DEBUG)
+        console.log("< ", ret);
     return ret;
 }
 
