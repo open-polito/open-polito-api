@@ -17,6 +17,7 @@ const defaultDeviceData: DeviceData = {
 
 export default class Device {
     uuid: string
+    token?: string;
 
     constructor(uuid: string) {
         this.uuid = uuid;
@@ -53,17 +54,15 @@ export default class Device {
         checkError(user_data);
 
         const token = user_data.data.login.token;
-        const user = new User();
-        user.uuid = this.uuid;
-        user.token = token;
-        user.anagrafica = {
+        this.token = token;
+        const user = new User(this, {
             matricola: user_data.data.anagrafica.matricola,
             matricole: user_data.data.anagrafica.all_matricolas,
             nome: user_data.data.anagrafica.nome,
             cognome: user_data.data.anagrafica.cognome,
             tipo_corso_laurea: user_data.data.anagrafica.tipo_corso_laurea,
             nome_corso_laurea: user_data.data.anagrafica.nome_corso_laurea,
-        }
+        });
         return {user, token};
     }
 
@@ -81,18 +80,19 @@ export default class Device {
         // Todo: mappare gli esiti fallimentari
         checkError(user_data);
 
-        const user = new User();
-        token = user_data.data.login.token;
-        user.uuid = this.uuid;
-        user.token = token;
-        user.anagrafica = {
+        this.token = user_data.data.login.token;
+        const user = new User(this, {
             matricola: user_data.data.anagrafica.matricola,
             matricole: user_data.data.anagrafica.all_matricolas,
             nome: user_data.data.anagrafica.nome,
             cognome: user_data.data.anagrafica.cognome,
             tipo_corso_laurea: user_data.data.anagrafica.tipo_corso_laurea,
             nome_corso_laurea: user_data.data.anagrafica.nome_corso_laurea,
-        }
+        });
         return { user, token };
+    }
+
+    async post(endpoint: string, data: { [key: string]: any }): Promise<any> {
+        return post(endpoint, Object.assign({ regID: this.uuid, token: this.token!! }, data));
     }
 }

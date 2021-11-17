@@ -1,25 +1,32 @@
-import { checkError, post } from "./utils";
+import { checkError } from "./utils";
 import { EsameProvvisorio, EsameSostenuto, Libretto } from "./libretto";
 import Corso from "./corso";
 import { CaricoDidattico } from "./carico_didattico";
+import Device from "./device";
+
+type Anagrafica = {
+    matricola: string, // Es. "123456",
+    matricole: string[], // La lista di matricole (es. triennale+magistrale)
+    nome: string, // "Mario"
+    cognome: string, // "ROSSI"
+    tipo_corso_laurea: string, // "Corso di Laurea in"
+    nome_corso_laurea: string, // "INGEGNERIA INFORMATICA"
+}
 
 export default class User {
-    uuid: string;
-    token: string;
-    anagrafica: {
-        matricola: string, // Es. "123456",
-        matricole: string[], // La lista di matricole (es. triennale+magistrale)
-        nome: string, // "Mario"
-        cognome: string, // "ROSSI"
-        tipo_corso_laurea: string, // "Corso di Laurea in"
-        nome_corso_laurea: string, // "INGEGNERIA INFORMATICA"
-    };
-    libretto: Libretto;
-    carico_didattico: CaricoDidattico;
+    device: Device
+    anagrafica: Anagrafica
+    libretto!: Libretto;
+    carico_didattico!: CaricoDidattico
+
+    constructor(device: Device, anagrafica: Anagrafica) {
+        this.device = device;
+        this.anagrafica = anagrafica;
+    }
 
     // Aggiorna libretto, valutazioni provvisorie e carico didattico
     async populate() {
-        const vote_data = await post("studente.php", { regID: this.uuid, token: this.token });
+        const vote_data = await this.device.post("studente.php", {});
         checkError(vote_data);
         this.libretto = new Libretto();
         this.libretto.materie = vote_data.data.libretto.map(s => ({
@@ -31,10 +38,10 @@ export default class User {
         } as EsameSostenuto));
         this.carico_didattico = new CaricoDidattico();
         this.carico_didattico.corsi = vote_data.data.carico_didattico.map(c => new Corso(
-            this.uuid, this.token, c.nome_ins, c.cod_ins, c.n_cfe, c.id_inc_1, c.categoria, c.overbooking == "N"
+            this.device, c.nome_ins, c.cod_ins, c.n_cfe, c.id_inc_1, c.categoria, c.overbooking == "N"
         ));
 
-        const prov_data = await post("valutazioni.php", { regID: this.uuid, token: this.token });
+        const prov_data = await this.device.post("valutazioni.php", {});
         checkError(prov_data);
         this.libretto.provvisori = prov_data.data.valutazioni_provvisorie.map(v => ({
             nome: v.NOME_INS,
@@ -52,7 +59,7 @@ export default class User {
         total: number,
         unread: number
     }> {
-        const data = await post("mail.php", {regID: this.uuid, token: this.token});
+        const data = await this.device.post("mail.php", {});
         // Todo: mappare gli esiti fallimentari
         checkError(data);
 

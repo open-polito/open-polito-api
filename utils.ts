@@ -2,7 +2,8 @@ const fetch = require("isomorphic-unfetch");
 
 const DEBUG = false;
 
-export async function post(endpoint: string, data: any): Promise<any> {
+// Do not use this directly, prefer Device.post.
+export async function post(endpoint: string, data: {[key: string]: any}): Promise<any> {
     if (DEBUG)
         console.log("> POST " + endpoint);
     const req: Response = await fetch("https://app.didattica.polito.it/" + endpoint, {

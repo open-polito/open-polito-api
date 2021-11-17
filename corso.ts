@@ -1,6 +1,5 @@
-import { Dir } from "fs";
-import { checkError, post } from "./utils";
-const util = require("util");
+import Device from "./device";
+import { checkError } from "./utils";
 
 type Avviso = {
     id: number
@@ -57,8 +56,7 @@ type Videolezione = {
 }
 
 export default class Corso {
-    uuid: string
-    token: string
+    device: Device
     nome: string
     codice: string
     cfu: number
@@ -76,9 +74,8 @@ export default class Corso {
     materiale: (File | Cartella)[]
     videolezioni: Videolezione[]
 
-    constructor(uuid: string, token: string, nome: string, codice: string, cfu: number, id_incarico: number | null, categoria: string, overbooking: boolean) {
-        this.uuid = uuid;
-        this.token = token;
+    constructor(device: Device, nome: string, codice: string, cfu: number, id_incarico: number | null, categoria: string, overbooking: boolean) {
+        this.device = device;
         this.nome = nome;
         this.codice = codice;
         this.cfu = cfu;
@@ -91,9 +88,9 @@ export default class Corso {
         const is_detailed = this.id_incarico !== null;
         let data;
         if (is_detailed)
-            data = await post("materia_dettaglio.php", { regID: this.uuid, token: this.token, incarico: this.id_incarico });
+            data = await this.device.post("materia_dettaglio.php", { incarico: this.id_incarico });
         else
-            data = await post("materia_dettaglio.php", { regID: this.uuid, token: this.token, cod_ins: this.codice });
+            data = await this.device.post("materia_dettaglio.php", { cod_ins: this.codice });
         checkError(data);
         console.log(util.inspect(data, { showHidden: false, depth: null, colors: true }));
         this.anno_accademico = data.data.info_corso.a_acc;
