@@ -23,7 +23,7 @@ export default class Device {
         this.uuid = uuid;
     }
 
-    async register(deviceData: DeviceData = defaultDeviceData) {
+    async register(deviceData: DeviceData = defaultDeviceData) : Promise<void> {
         const data = {
             regID: this.uuid,
             uuid: this.uuid,
@@ -33,10 +33,8 @@ export default class Device {
             device_manufacturer: deviceData.manufacturer
         };
 
-        const esito = (await post("register.php", data)).esito.generale.stato;
-        // Todo: mappare gli esiti fallimentari
-        if (esito < 0)
-            throw new Error(`Registrazione fallita: esito=${esito}`);
+        const register_data = await post("register.php", data);
+        checkError(register_data);
     }
 
     async loginWithCredentials(username: string, password: string): Promise<{
@@ -50,7 +48,6 @@ export default class Device {
         };
 
         const user_data = (await post("login.php", data));
-        // Todo: mappare gli esiti fallimentari
         checkError(user_data);
 
         const token = user_data.data.login.token;
@@ -66,21 +63,21 @@ export default class Device {
         return {user, token};
     }
 
-    async loginWithToken(username: string, token: string): Promise<{
+    async loginWithToken(username: string, login_token: string): Promise<{
         user: User,
         token: string
     }> {
         const data = {
             regID: this.uuid,
             username,
-            token
+            token: login_token,
         };
 
         const user_data = (await post("login.php", data));
-        // Todo: mappare gli esiti fallimentari
         checkError(user_data);
 
-        this.token = user_data.data.login.token;
+        const token = user_data.data.login.token;
+        this.token = token;
         const user = new User(this, {
             matricola: user_data.data.anagrafica.matricola,
             matricole: user_data.data.anagrafica.all_matricolas,
