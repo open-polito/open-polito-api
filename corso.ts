@@ -100,9 +100,9 @@ export default class Corso {
         }
         this.nome_prof = data.data.info_corso.nome_doce;
         this.cognome_prof = data.data.info_corso.cognome_doce;
-        this.avvisi = data.data.avvisi;
-        this.materiale = data.data.materiale.map(item => parseMateriale(item));
-        this.videolezioni = data.data.videolezioni.lista_videolezioni.map(item => {
+        this.avvisi = data.data.avvisi || [];
+        this.materiale = data.data.materiale?.map(item => parseMateriale(item)) || [];
+        this.videolezioni = data.data.videolezioni?.lista_videolezioni?.map(item => {
             const duration_parts = item.duration.match(/^(\d+)h (\d+)m$/);
             const duration = 60*parseInt(duration_parts[1]) + parseInt(duration_parts[2]);
             return {
@@ -112,7 +112,7 @@ export default class Corso {
                 cover_url: item.cover_url,
                 durata: duration
             } as Videolezione;
-        });
+        }) || [];
         /* Guida del corso:
          * data.data.guida = [
          *     {titolo: "Presentazione", testo: "..."},
