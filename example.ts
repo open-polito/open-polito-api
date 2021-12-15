@@ -1,3 +1,4 @@
+import { getContexts, getSlots } from "./booking";
 import Device from "./device";
 
 const device = new Device("ea27a150-39d5-4f6a-ae1e-51f38bfe0039");
@@ -11,4 +12,7 @@ const device = new Device("ea27a150-39d5-4f6a-ae1e-51f38bfe0039");
     console.log(user);
     console.log(user.carico_didattico.corsi[2]);
     console.log(await user.carico_didattico.corsi[2].download(33278489));
+    await user.updateBookings();
+    console.log(user.bookings);
+    console.log(await getSlots(user.device, "AULE_STUDIO", "AS_LINGOTTO_2"));
 })();

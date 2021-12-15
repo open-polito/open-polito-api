@@ -3,6 +3,7 @@ import { EsameProvvisorio, EsameSostenuto, Libretto } from "./libretto";
 import Corso from "./corso";
 import { CaricoDidattico } from "./carico_didattico";
 import Device from "./device";
+import { Booking, getBookings } from "./booking";
 
 type Anagrafica = {
     matricola: string, // Es. "123456",
@@ -18,10 +19,12 @@ export default class User {
     anagrafica: Anagrafica
     libretto!: Libretto;
     carico_didattico!: CaricoDidattico
+    bookings: Booking[]
 
     constructor(device: Device, anagrafica: Anagrafica) {
         this.device = device;
         this.anagrafica = anagrafica;
+        this.bookings = [];
     }
 
     // Aggiorna libretto, valutazioni provvisorie e carico didattico
@@ -52,6 +55,11 @@ export default class User {
             docente: v.MAT_DOCENTE,
             messaggio: v.T_MESSAGGIO,
         } as EsameProvvisorio));
+    }
+
+    // Aggiorna prenotazioni
+    async updateBookings() {
+        this.bookings = await getBookings(this.device);
     }
 
     // Numero di mail totali e non lette
