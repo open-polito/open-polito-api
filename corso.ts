@@ -55,6 +55,22 @@ type Videolezione = {
     durata: number // In minuti
 }
 
+type VirtualClassroomRecording = Videolezione
+
+function parseRecording(item: any): VirtualClassroomRecording {
+    const duration_parts = item.duration.match(/^(\d+)h (\d+)m$/);
+    let duration = -1;
+    if (duration_parts !== null)
+        duration = 60 * parseInt(duration_parts[1]) + parseInt(duration_parts[2]);
+    return {
+        titolo: item.titolo,
+        data: item.data,
+        url: item.video_url,
+        cover_url: item.cover_url,
+        durata: duration
+    } as VirtualClassroomRecording;
+}
+
 type CourseInfoParagraph = {
     title: string
     text: string
@@ -78,6 +94,10 @@ export default class Corso {
     avvisi: Avviso[]
     materiale: (File | Cartella)[]
     videolezioni: Videolezione[]
+    vc_recordings: {
+        current: VirtualClassroomRecording[],
+        [year: number]: VirtualClassroomRecording[]
+    }
     info: CourseInfoParagraph[]
 
     constructor(device: Device, nome: string, codice: string, cfu: number, id_incarico: number | null, categoria: string, overbooking: boolean) {
@@ -119,6 +139,10 @@ export default class Corso {
                 durata: duration
             } as Videolezione;
         }) || [];
+        this.vc_recordings = {current: []};
+        this.vc_recordings.current = data.data.virtualclassroom?.registrazioni.map(item => parseRecording(item)) || [];
+        for (const recordings of data.data.virtualclassroom?.vc_altri_anni)
+            this.vc_recordings[recordings.anno] = recordings.vc.map(item => parseRecording(item));
         this.info = data.data.guida.map(p => ({
             title: p.titolo.replace(this.nome, ""),
             text: p.testo,
