@@ -55,6 +55,11 @@ type Videolezione = {
     durata: number // In minuti
 }
 
+type CourseInfoParagraph = {
+    title: string
+    text: string
+}
+
 export default class Corso {
     device: Device
     nome: string
@@ -73,6 +78,7 @@ export default class Corso {
     avvisi: Avviso[]
     materiale: (File | Cartella)[]
     videolezioni: Videolezione[]
+    info: CourseInfoParagraph[]
 
     constructor(device: Device, nome: string, codice: string, cfu: number, id_incarico: number | null, categoria: string, overbooking: boolean) {
         this.device = device;
@@ -113,15 +119,10 @@ export default class Corso {
                 durata: duration
             } as Videolezione;
         }) || [];
-        /* Guida del corso:
-         * data.data.guida = [
-         *     {titolo: "Presentazione", testo: "..."},
-         *     {titolo: "Risultati attesi", testo: "..."},
-         *     {titolo: "Prerequisiti", testo: "..."},
-         *    ...
-         * ]
-         */
-
+        this.info = data.data.guida.map(p => ({
+            title: p.titolo.replace(this.nome, ""),
+            text: p.testo,
+        }) as CourseInfoParagraph);
     }
 
     // Returns a download URL.
