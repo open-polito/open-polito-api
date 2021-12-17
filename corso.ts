@@ -136,7 +136,7 @@ export default class Corso {
             const duration = 60*parseInt(duration_parts[1]) + parseInt(duration_parts[2]);
             return {
                 titolo: item.titolo,
-                data: parseDate(item.data, "DD/MM/YYYY hh:mm"),
+                data: parseDate(item.data, item.data.includes(":") ? "DD/MM/YYYY hh:mm" : "DD/MM/YYYY"),
                 url: item.video_url,
                 cover_url: item.cover_url,
                 durata: duration
