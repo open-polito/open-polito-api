@@ -2,7 +2,7 @@ export type EsameSostenuto = {
     nome: string,
     cfu: number,
     voto: string,
-    data: string, // todo: make this a Date
+    data: Date,
     stato: string,
 }
 

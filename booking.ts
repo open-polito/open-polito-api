@@ -1,5 +1,6 @@
 import Device from "./device";
 import { checkError } from "./utils";
+import { parse as parseDate } from "date-format-parse"
 
 type BookingContextID = "AULE_STUDIO" | "LEZIONI" | string
 
@@ -36,10 +37,10 @@ type BookingContext = {
 }
 
 type BookingSlot = {
-    slot_start: string // "15/12/2021 16:00"
-    slot_end: string // "15/12/2021 17:30"
-    bookable_from: string // "2021-12-13T16:00:00"
-    bookable_until: string // "2021-12-15T17:00:00"
+    slot_start: Date
+    slot_end: Date
+    bookable_from: Date
+    bookable_until: Date
     bookable: boolean
     seatsTotal: number
     seatsTaken: number
@@ -51,8 +52,8 @@ class Booking {
     context_name: string         // "Prenotazione posti in sale studio"
     subcontext_id: string        // "AS_LINGOTTO_2"
     subcontext_name: string      // Lingotto - Sala studio Le Corbusier
-    start_time: string           // "2021-12-15T13:30:00"
-    end_time: string             // "2021-12-15T17:30:00"
+    start_time: Date
+    end_time: Date
     course_id?: string           // "01PECQW" (only for lessons)
 
     static barcode_url(username: string): string {
@@ -69,8 +70,8 @@ async function getBookings(device: Device): Promise<Booking[]> {
         ret.context_name = b.descr_ambito;
         ret.subcontext_id = b.id_subambito;
         ret.subcontext_name = b.nome_subambito;
-        ret.start_time = b.d_ini_turno_ts;
-        ret.end_time = b.d_fin_turno_ts;
+        ret.start_time = new Date(b.d_ini_turno_ts);
+        ret.end_time = new Date(b.d_fin_turno_ts);
         const matches = b.lezione.match(/<h3><b>([^<]+)<\/h3><\/b>/);
         if (matches == null) {
             ret.course_id = undefined;
@@ -123,10 +124,10 @@ async function getSlots(device: Device, context_id: string, subcontext_id?: stri
     const bookings_data = await device.post("booking_api.php", input);
     checkError(bookings_data);
     return bookings_data.data.booking_api.turni.map(t => ({
-        slot_start: t.d_ini,
-        slot_end: t.d_fin,
-        bookable_from: t.d_ini_preno_ts,
-        bookable_until: t.d_fin_preno_ts,
+        slot_start: parseDate(t.d_ini, "DD/MM/YYYY hh:mm"),
+        slot_end: parseDate(t.d_fin, "DD/MM/YYYY hh:mm"),
+        bookable_from: new Date(t.d_ini_preno_ts),
+        bookable_until: new Date(t.d_fin_preno_ts),
         bookable: t.bookable,
         seatsTotal: t.posti,
         seatsTaken: t.postiOccupati,

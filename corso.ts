@@ -1,10 +1,10 @@
 import Device from "./device";
 import { checkError } from "./utils";
+import { parse as parseDate } from "date-format-parse"
 
 type Avviso = {
     id: number
-    data_inizio: string
-    data_fine: string
+    data: Date
     info: string // In raw HTML
 }
 
@@ -15,7 +15,7 @@ type File = {
     nome: string     // Nome da presentare all'utente
     mime_type: string
     size_kb: number
-    data_inserimento: string
+    data_inserimento: Date
 }
 
 type Cartella = {
@@ -34,7 +34,7 @@ function parseMateriale(item: any): File|Cartella {
                 nome: item.descrizione,
                 mime_type: item.cont_type,
                 size_kb: item.size_kb,
-                data_inserimento: item.data_ins
+                data_inserimento: parseDate(item.data_ins, "YYYY/MM/DD hh:mm:ss")
             } as File;
         case "DIR":
             return {
@@ -49,7 +49,7 @@ function parseMateriale(item: any): File|Cartella {
 
 type Videolezione = {
     titolo: string
-    data: string
+    data: Date
     url: string
     cover_url: string
     durata: number // In minuti
@@ -64,7 +64,7 @@ function parseRecording(item: any): VirtualClassroomRecording {
         duration = 60 * parseInt(duration_parts[1]) + parseInt(duration_parts[2]);
     return {
         titolo: item.titolo,
-        data: item.data,
+        data: parseDate(item.data, "DD/MM/YYYY hh:mm"),
         url: item.video_url,
         cover_url: item.cover_url,
         durata: duration
@@ -126,14 +126,17 @@ export default class Corso {
         }
         this.nome_prof = data.data.info_corso.nome_doce;
         this.cognome_prof = data.data.info_corso.cognome_doce;
-        this.avvisi = data.data.avvisi || [];
+        this.avvisi = data.data.avvisi.map(a => ({
+            data: parseDate(a.data_inizio, "DD/MM/YYYY"),
+            info: a.info
+        }) as Avviso) || [];
         this.materiale = data.data.materiale?.map(item => parseMateriale(item)) || [];
         this.videolezioni = data.data.videolezioni?.lista_videolezioni?.map(item => {
             const duration_parts = item.duration.match(/^(\d+)h (\d+)m$/);
             const duration = 60*parseInt(duration_parts[1]) + parseInt(duration_parts[2]);
             return {
                 titolo: item.titolo,
-                data: item.data,
+                data: parseDate(item.data, "DD/MM/YYYY hh:mm"),
                 url: item.video_url,
                 cover_url: item.cover_url,
                 durata: duration

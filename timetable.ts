@@ -1,9 +1,10 @@
 import Device from "./device";
 import { checkError } from "./utils";
+import { parse as parseDate } from "date-format-parse";
 
 type TimetableSlot = {
-    start_time: string // '15/12/2021 13:00:00'
-    end_time: string
+    start_time: Date // '15/12/2021 13:00:00'
+    end_time: Date
     type: string // 'Lezione/Esercitazione'
     subject_title: string
     professor: {
@@ -18,8 +19,8 @@ export async function getTimetable(device: Device, date: Date = new Date()): Pro
     const data = await device.post("orari_lezioni.php", { data_rif: (100 + date.getDate()).toString().substring(1) + "/" + (101 + date.getMonth()).toString().substring(1) + "/" + date.getFullYear() });
     checkError(data);
     return data.data.orari.map(o => ({
-        start_time: o.ORA_INIZIO,
-        end_time: o.ORA_FINE,
+        start_time: parseDate(o.ORA_INIZIO, "DD/MM/YYYY hh:mm:ss"),
+        end_time: parseDate(o.ORA_FINE, "DD/MM/YYYY hh:mm:ss"),
         type: o.TIPOLOGIA_EVENTO,
         subject_title: o.TITOLO_MATERIA,
         professor: {

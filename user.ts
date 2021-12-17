@@ -4,6 +4,7 @@ import Corso from "./corso";
 import { CaricoDidattico } from "./carico_didattico";
 import Device from "./device";
 import { Booking, getBookings } from "./booking";
+import { parse as parseDate } from "date-format-parse";
 
 type Anagrafica = {
     matricola: string, // Es. "123456",
@@ -36,7 +37,7 @@ export default class User {
             nome: s.nome_ins,
             cfu: s.n_cfe,
             voto: s.desc_voto,
-            data: s.d_esame,
+            data: parseDate(s.d_esame, "DD/MM/YYYY"),
             stato: s.esplica_efi,
         } as EsameSostenuto));
         this.carico_didattico = new CaricoDidattico();
