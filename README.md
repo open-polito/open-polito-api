@@ -42,7 +42,7 @@ An open source, **unofficial** API for Politecnico di Torino.
  - [ ] /offerta_lavoro_dettaglio.php
  - [ ] /offerte_lavoro.php
  - [ ] /orari_lezioni_dett.php
- - [ ] /orari_lezioni.php
+ - [x] /orari_lezioni.php
  - [ ] /orari_lezioni_pub.php
  - [ ] /percorsi_formativi.php
  - [ ] /piano_studi.php
