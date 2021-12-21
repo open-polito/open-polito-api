@@ -15,16 +15,18 @@ const defaultDeviceData: DeviceData = {
     manufacturer: "Apple",
 };
 
-type RequestLogger = (event: {response: boolean, endpoint: string, text: string}) => void;
+type RequestLogger = (event: {endpoint: string, request: string, response: string}) => void;
 
 export default class Device {
     uuid: string
     token?: string;
     request_logger: RequestLogger;
+    base_url: string;
 
-    constructor(uuid: string, request_logger: RequestLogger = () => { }) {
+    constructor(uuid: string, request_logger: RequestLogger = () => { }, base_url = "https://app.didattica.polito.it/") {
         this.uuid = uuid;
         this.request_logger = request_logger;
+        this.base_url = base_url;
     }
 
     async register(deviceData: DeviceData = defaultDeviceData) : Promise<void> {
@@ -37,8 +39,14 @@ export default class Device {
             device_manufacturer: deviceData.manufacturer
         };
 
-        const register_data = await post("register.php", data);
+        const register_data = await post(this.base_url, "register.php", data);
+        this.request_logger({
+            endpoint: "register.php",
+            request: JSON.stringify(data),
+            response: JSON.stringify(register_data),
+        });
         checkError(register_data);
+
     }
 
     async loginWithCredentials(username: string, password: string): Promise<{
@@ -51,7 +59,12 @@ export default class Device {
             password
         };
 
-        const user_data = (await post("login.php", data));
+        const user_data = (await post(this.base_url, "login.php", data));
+        this.request_logger({
+            endpoint: "login.php",
+            request: JSON.stringify(data),
+            response: JSON.stringify(user_data),
+        });
         checkError(user_data);
 
         const token = user_data.data.login.token;
@@ -77,7 +90,12 @@ export default class Device {
             token: login_token,
         };
 
-        const user_data = (await post("login.php", data));
+        const user_data = (await post(this.base_url, "login.php", data));
+        this.request_logger({
+            endpoint: "login.php",
+            request: JSON.stringify(data),
+            response: JSON.stringify(user_data),
+        });
         checkError(user_data);
 
         const token = user_data.data.login.token;
@@ -94,16 +112,11 @@ export default class Device {
     }
 
     async post(endpoint: string, data: { [key: string]: any }): Promise<any> {
+        const response = await post(this.base_url, endpoint, Object.assign({ regID: this.uuid, token: this.token!! }, data));
         this.request_logger({
-            response: false,
             endpoint,
-            text: JSON.stringify(data),
-        });
-        const response = await post(endpoint, Object.assign({ regID: this.uuid, token: this.token!! }, data));
-        this.request_logger({
-            response: true,
-            endpoint,
-            text: JSON.stringify(response),
+            request: JSON.stringify(data),
+            response: JSON.stringify(response),
         });
         return response;
     }

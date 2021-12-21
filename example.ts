@@ -2,7 +2,7 @@ import { getContexts, getSlots } from "./booking";
 import Device from "./device";
 import { getTimetable } from "./timetable";
 
-const device = new Device("ea27a150-39d5-4f6a-ae1e-51f38bfe0039", /* ({response, text}) => console.log(response ? '>' : '<', text) */);
+const device = new Device("ea27a150-39d5-4f6a-ae1e-51f38bfe0039", () => {}, "http://127.0.0.1:8080/");
 (async () => {
     await device.register();
     const {user, token} = await device.loginWithCredentials("S123456", "password");
@@ -16,5 +16,5 @@ const device = new Device("ea27a150-39d5-4f6a-ae1e-51f38bfe0039", /* ({response,
     console.log(await user.carico_didattico.corsi[2].download(33278489));
     await user.updateBookings();
     console.log("Bookings:", user.bookings);
-    console.log(await getSlots(user.device, "AULE_STUDIO", "AS_LINGOTTO_2"));
+    console.log(await getSlots(user.device, "AULE_STUDIO", "AS_LINGOTTO_2", new Date("2021-12-21T12:03:04.564Z")));
 })();

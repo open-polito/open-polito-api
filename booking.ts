@@ -113,11 +113,11 @@ async function getContexts(device: Device): Promise<BookingContext[]> {
     }) as BookingContext);
 }
 
-async function getSlots(device: Device, context_id: string, subcontext_id?: string): Promise<BookingSlot[]> {
+async function getSlots(device: Device, context_id: string, subcontext_id?: string, date: Date = new Date()): Promise<BookingSlot[]> {
     let input: any = {
         operazione: "getTurni",
         ambito: context_id,
-        from: (new Date()).getTime(), to: (new Date()).getTime() + 1000 * 3600 * 24
+        from: date.getTime(), to: date.getTime() + 1000 * 3600 * 24
     }
     if (subcontext_id)
         input.subambito = subcontext_id
@@ -131,7 +131,7 @@ async function getSlots(device: Device, context_id: string, subcontext_id?: stri
         bookable: t.bookable,
         seatsTotal: t.posti,
         seatsTaken: t.postiOccupati,
-    }) as BookingSlot);
+    }) as BookingSlot) || [];
 }
 
 export { Booking, BookingSlot, BookingContext, BookingSubcontext, getBookings, getContexts, getSlots };

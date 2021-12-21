@@ -126,7 +126,7 @@ export default class Corso {
         }
         this.nome_prof = data.data.info_corso.nome_doce;
         this.cognome_prof = data.data.info_corso.cognome_doce;
-        this.avvisi = data.data.avvisi.map(a => ({
+        this.avvisi = data.data.avvisi?.map(a => ({
             data: parseDate(a.data_inizio, "DD/MM/YYYY"),
             info: a.info
         }) as Avviso) || [];
@@ -143,13 +143,16 @@ export default class Corso {
             } as Videolezione;
         }) || [];
         this.vc_recordings = {current: []};
+        if (this.nome == "Tesi")
+            console.log(data.data);
         this.vc_recordings.current = data.data.virtualclassroom?.registrazioni.map(item => parseRecording(item)) || [];
-        for (const recordings of data.data.virtualclassroom?.vc_altri_anni)
+        for (const recordings of data.data.virtualclassroom?.vc_altri_anni || [])
             this.vc_recordings[recordings.anno] = recordings.vc.map(item => parseRecording(item));
-        this.info = data.data.guida.map(p => ({
-            title: p.titolo.replace(this.nome, ""),
-            text: p.testo,
-        }) as CourseInfoParagraph);
+        this.info = Array.isArray(data.data.guida) ?
+            data.data.guida?.map(p => ({
+                title: p.titolo.replace(this.nome, ""),
+                text: p.testo,
+            }) as CourseInfoParagraph) : [];
     }
 
     // Returns a download URL.
