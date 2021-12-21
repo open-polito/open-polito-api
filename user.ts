@@ -77,4 +77,10 @@ export default class User {
             unread: data.data.mail.unread,
         };
     }
+
+    async emailUrl(): Promise<string> {
+        const data = await this.device.post("goto_webmail.php", {});
+        checkError(data);
+        return data.data.url;
+    }
 }
