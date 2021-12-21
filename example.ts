@@ -2,7 +2,7 @@ import { getContexts, getSlots } from "./booking";
 import Device from "./device";
 import { getTimetable } from "./timetable";
 
-const device = new Device("ea27a150-39d5-4f6a-ae1e-51f38bfe0039");
+const device = new Device("ea27a150-39d5-4f6a-ae1e-51f38bfe0039", /* ({response, text}) => console.log(response ? '>' : '<', text) */);
 (async () => {
     await device.register();
     const {user, token} = await device.loginWithCredentials("S123456", "password");

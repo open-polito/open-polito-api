@@ -15,12 +15,16 @@ const defaultDeviceData: DeviceData = {
     manufacturer: "Apple",
 };
 
+type RequestLogger = (event: {response: boolean, endpoint: string, text: string}) => void;
+
 export default class Device {
     uuid: string
     token?: string;
+    request_logger: RequestLogger;
 
-    constructor(uuid: string) {
+    constructor(uuid: string, request_logger: RequestLogger = () => { }) {
         this.uuid = uuid;
+        this.request_logger = request_logger;
     }
 
     async register(deviceData: DeviceData = defaultDeviceData) : Promise<void> {
@@ -90,6 +94,17 @@ export default class Device {
     }
 
     async post(endpoint: string, data: { [key: string]: any }): Promise<any> {
-        return post(endpoint, Object.assign({ regID: this.uuid, token: this.token!! }, data));
+        this.request_logger({
+            response: false,
+            endpoint,
+            text: JSON.stringify(data),
+        });
+        const response = await post(endpoint, Object.assign({ regID: this.uuid, token: this.token!! }, data));
+        this.request_logger({
+            response: true,
+            endpoint,
+            text: JSON.stringify(response),
+        });
+        return response;
     }
 }
