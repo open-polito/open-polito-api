@@ -71,6 +71,31 @@ function parseRecording(item: any): VirtualClassroomRecording {
     } as VirtualClassroomRecording;
 }
 
+class LiveVCLesson {
+    id_inc: number;
+    meeting_id: string;
+    title: string;
+    date: Date;
+    url: string;
+    running: boolean;
+
+    constructor(id_inc: number, meeting_id: string, title: string, date: string) {
+        this.id_inc = id_inc;
+        this.meeting_id = meeting_id;
+        this.title = title;
+        this.date = parseDate(date, "DD/MM/YYYY hh:mm");
+    }
+
+    // Sets .url and .running
+    async populate(device: Device) {
+        const data = await device.post("goto_virtualclassroom.php", { id_inc: this.id_inc, meetingid: this.meeting_id });
+        checkError(data);
+        this.running = data.data.isrunning;
+        this.url = data.data.url;
+        // this.url = `https://didattica.polito.it/pls/portal30/sviluppo.bbb_corsi.joinVirtualClassStudente?p_id_inc=${this.id_inc}&p_meeting_id=${this.meeting_id}`;
+    }
+}
+
 type CourseInfoParagraph = {
     title: string
     text: string
@@ -93,6 +118,7 @@ export default class Corso {
     cognome_prof: string
     avvisi: Avviso[]
     materiale: (File | Cartella)[]
+    live_lessons: LiveVCLesson[]
     videolezioni: Videolezione[]
     vc_recordings: {
         current: VirtualClassroomRecording[],
@@ -131,6 +157,7 @@ export default class Corso {
             info: a.info
         }) as Avviso) || [];
         this.materiale = data.data.materiale?.map(item => parseMateriale(item)) || [];
+        this.live_lessons = data.data.virtualclassroom?.live.map(vc => new LiveVCLesson(vc.id_inc, vc.meetingid, vc.titolo, vc.data)) || [];
         this.videolezioni = data.data.videolezioni?.lista_videolezioni?.map(item => {
             const duration_parts = item.duration.match(/^(\d+)h (\d+)m$/);
             const duration = 60*parseInt(duration_parts[1]) + parseInt(duration_parts[2]);
