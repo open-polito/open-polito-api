@@ -109,6 +109,7 @@ export default class Corso {
     id_incarico: number | null
     categoria: string
     overbooking: boolean
+    extra: boolean // "Altri corsi"
 
     // Valori settati da populate()
     anno_accademico: string // a.a. di fine corso (es. 2021/22 avrà anno_accademico = 2022)
@@ -126,7 +127,7 @@ export default class Corso {
     }
     info: CourseInfoParagraph[]
 
-    constructor(device: Device, nome: string, codice: string, cfu: number, id_incarico: number | null, categoria: string, overbooking: boolean) {
+    constructor(device: Device, nome: string, codice: string, cfu: number, id_incarico: number | null, categoria: string, overbooking: boolean, extra: boolean) {
         this.device = device;
         this.nome = nome;
         this.codice = codice;
@@ -134,6 +135,7 @@ export default class Corso {
         this.id_incarico = id_incarico;
         this.categoria = categoria;
         this.overbooking = overbooking;
+        this.extra = extra;
     }
 
     async populate() {

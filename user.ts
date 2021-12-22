@@ -42,8 +42,10 @@ export default class User {
         } as EsameSostenuto));
         this.carico_didattico = new CaricoDidattico();
         this.carico_didattico.corsi = vote_data.data.carico_didattico.map(c => new Corso(
-            this.device, c.nome_ins, c.cod_ins, c.n_cfe, c.id_inc_1, c.categoria, c.overbooking == "N"
-        ));
+            this.device, c.nome_ins, c.cod_ins, c.n_cfe, c.id_inc_1, c.categoria, c.overbooking == "N", false
+        )).concat(vote_data.data.altri_corsi?.map(c => new Corso(
+            this.device, c.nome_ins, c.cod_ins, c.n_cfe, c.id_inc_1, c.categoria, c.overbooking == "N", true
+        )) || []);
 
         const prov_data = await this.device.post("valutazioni.php", {});
         checkError(prov_data);
