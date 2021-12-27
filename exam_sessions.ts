@@ -36,7 +36,7 @@ export async function bookExamSession(device: Device, session_id: number, exam_i
     return data.data.esami.id;
 }
 
-export async function cancelExamSession(device: Device, session_id: number, exam_id: string): Promise<number> {
+export async function cancelExamSession(device: Device, session_id: number, exam_id: string) {
     const data = await device.post("esami.php", { operazione: "ANNULLA", cod_ins: exam_id, id_verbale: session_id });
     checkError(data);
 }

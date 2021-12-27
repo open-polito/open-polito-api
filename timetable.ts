@@ -18,6 +18,8 @@ type TimetableSlot = {
 export async function getTimetable(device: Device, date: Date = new Date()): Promise<TimetableSlot[]> {
     const data = await device.post("orari_lezioni.php", { data_rif: (100 + date.getDate()).toString().substring(1) + "/" + (101 + date.getMonth()).toString().substring(1) + "/" + date.getFullYear() });
     checkError(data);
+    if (data.data.orari === "") // the API returns "" when there are no lessons
+        return [];
     return data.data.orari.map(o => ({
         start_time: parseDate(o.ORA_INIZIO, "DD/MM/YYYY hh:mm:ss"),
         end_time: parseDate(o.ORA_FINE, "DD/MM/YYYY hh:mm:ss"),
