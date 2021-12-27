@@ -24,7 +24,6 @@ type ExamSession = {
 export async function getExamSessions(device: Device): Promise<ExamSession[]> {
     const data = await device.post("esami.php", { operazione: "LISTA" });
     checkError(data);
-    console.log(data.data.esami);
     return data.data.esami.data.map(e => ({
         session_id: e.ID_VERBALE,
         exam_id: e.COD_INS_STUDENTE,
