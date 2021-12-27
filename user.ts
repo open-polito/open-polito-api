@@ -44,9 +44,9 @@ export default class User {
         const standard_courses = vote_data.data.carico_didattico;
         const extra_courses = Array.isArray(vote_data.data.altri_corsi) ? vote_data.data.altri_corsi!! : [];
         this.carico_didattico.corsi = standard_courses.map(c => new Corso(
-            this.device, c.nome_ins, c.cod_ins, c.n_cfe, c.id_inc_1, c.categoria, c.overbooking == "N", false
+            this.device, c.nome_ins, c.cod_ins, c.n_cfe, c.id_inc_1, c.categoria, c.overbooking != "N", false
         )).concat(extra_courses.map(c => new Corso(
-            this.device, c.nome_ins, c.cod_ins, c.n_cfe, c.id_inc_1, c.categoria, c.overbooking == "N", true
+            this.device, c.nome_ins, c.cod_ins, c.n_cfe, c.id_inc_1, c.categoria, c.overbooking != "N", true
         )) || []);
 
         const prov_data = await this.device.post("valutazioni.php", {});
