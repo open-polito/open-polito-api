@@ -5,7 +5,9 @@ import { parse as parseDate } from "date-format-parse";
 type ExamSession = {
     session_id: number
     exam_id: string // 01URPOV
+    signup_id: number // Unknown value
     exam_name: string // 'Machine learning for vision and multimedia (AA-ZZ)'
+    user_is_signed_up: boolean
     date: Date
     room: string
     type: string // 'Scritto e Orale'
@@ -16,15 +18,16 @@ type ExamSession = {
 export async function getExamSessions(device: Device): Promise<ExamSession[]> {
     const data = await device.post("esami.php", { operazione: "LISTA" });
     checkError(data);
-    console.log(data.data.esami.data);
     return data.data.esami.data.map(e => ({
         session_id: e.ID_VERBALE,
         exam_id: e.COD_INS_STUDENTE,
+        signup_id: e.ID,
         exam_name: e.NOME_INS,
+        user_is_signed_up: e.ID != -1,
         date: parseDate(e.DATA_APPELLO + ' ' + e.ORA_APPELLO, "DD/MM/YYYY hh:mm"),
         room: e.AULA,
         type: e.DESC_TIPO,
-        error_msg: (e.DESCR_MSG == "CONTROLLO SUPERATO") ? "" : e.DESCR_MSG,
+        error_msg: (e.DESCR_MSG == "CONTROLLO SUPERATO" || e.ID != -1) ? "" : e.DESCR_MSG,
         signup_deadline: parseDate(e.SCADENZA, "DD/MM/YYYY hh:mm"),
     }) as ExamSession)
 }
