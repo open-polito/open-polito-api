@@ -1,9 +1,9 @@
-import { checkError } from "./utils";
-import { EsameProvvisorio, EsameSostenuto, Libretto } from "./libretto";
-import Corso from "./corso";
-import { CaricoDidattico } from "./carico_didattico";
+import { checkError } from "./utils.js";
+import { EsameProvvisorio, EsameSostenuto, Libretto } from "./libretto.js";
+import Corso from "./corso.js";
+import { CaricoDidattico } from "./carico_didattico.js";
 import Device from "./device";
-import { Booking, getBookings } from "./booking";
+import { Booking, getBookings } from "./booking.js";
 import { parse as parseDate } from "date-format-parse";
 
 type Anagrafica = {

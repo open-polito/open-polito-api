@@ -1,4 +1,4 @@
-const fetch = require("isomorphic-unfetch");
+import fetch from "isomorphic-unfetch";
 
 const DEBUG = false;
 

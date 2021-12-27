@@ -1,5 +1,5 @@
-import { checkError, post } from "./utils";
-import User from "./user";
+import { checkError, post } from "./utils.js";
+import User from "./user.js";
 
 type DeviceData = {
     platform: string,
