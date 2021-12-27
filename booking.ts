@@ -33,7 +33,7 @@ type BookingContext = {
         title: string
         description: string
     }
-    subcontexts: BookingSubcontext[] // may be undefined, eg. for lessons
+    subcontexts?: BookingSubcontext[] // may be undefined, eg. for lessons
 }
 
 type BookingSlot = {
@@ -73,9 +73,7 @@ async function getBookings(device: Device): Promise<Booking[]> {
         ret.start_time = new Date(b.d_ini_turno_ts);
         ret.end_time = new Date(b.d_fin_turno_ts);
         const matches = b.lezione.match(/<h3><b>([^<]+)<\/h3><\/b>/);
-        if (matches == null) {
-            ret.course_id = undefined;
-        } else {
+        if (matches != null) {
             const lesson = matches[1];
             const parts = lesson.split(" ");
             ret.course_id = parts[parts.length - 1];

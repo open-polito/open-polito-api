@@ -112,7 +112,7 @@ export default class Device {
     }
 
     async post(endpoint: string, data: { [key: string]: any }): Promise<any> {
-        const response = await post(this.base_url, endpoint, Object.assign({ regID: this.uuid, token: this.token!! }, data));
+        const response = await post(this.base_url, endpoint, Object.assign({ regID: this.uuid, token: this.token! }, data));
         this.request_logger({
             endpoint,
             request: JSON.stringify(data),

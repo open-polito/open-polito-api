@@ -42,7 +42,7 @@ export default class User {
         } as EsameSostenuto));
         this.carico_didattico = new CaricoDidattico();
         const standard_courses = vote_data.data.carico_didattico;
-        const extra_courses = Array.isArray(vote_data.data.altri_corsi) ? vote_data.data.altri_corsi!! : [];
+        const extra_courses = Array.isArray(vote_data.data.altri_corsi) ? vote_data.data.altri_corsi! : [];
         this.carico_didattico.corsi = standard_courses.map(c => new Corso(
             this.device, c.nome_ins, c.cod_ins, c.n_cfe, c.id_inc_1, c.categoria, c.overbooking != "N", false
         )).concat(extra_courses.map(c => new Corso(
