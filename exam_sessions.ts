@@ -15,6 +15,7 @@ type ExamSession = {
     signup_deadline: Date
 };
 
+// Returns exam sessions starting with the closest one.
 export async function getExamSessions(device: Device): Promise<ExamSession[]> {
     const data = await device.post("esami.php", { operazione: "LISTA" });
     checkError(data);
@@ -29,7 +30,7 @@ export async function getExamSessions(device: Device): Promise<ExamSession[]> {
         type: e.DESC_TIPO,
         error_msg: (e.DESCR_MSG == "CONTROLLO SUPERATO" || e.ID != -1) ? "" : e.DESCR_MSG,
         signup_deadline: parseDate(e.SCADENZA, "DD/MM/YYYY hh:mm"),
-    }) as ExamSession)
+    }) as ExamSession).sort((a, b) => a.date - b.date);
 }
 
 // Returns an exam session ID that is currently unused.
