@@ -1,6 +1,7 @@
-import { getContexts, getSlots } from "../booking";
-import Device from "../device";
-import { getTimetable } from "../timetable";
+import { getContexts, getSlots } from "../booking.js";
+import Device from "../device.js";
+import { getExamSessions } from "../exam_sessions.js";
+import { getTimetable } from "../timetable.js";
 
 const username = "S123456";
 const password = "password";
@@ -13,6 +14,7 @@ const device = new Device("ea27a150-39d5-4f6a-ae1e-51f38bfe0039", logger);
     await device.register();
     const { user } = await device.loginWithCredentials(username, password);
     await user.populate();
+    await getExamSessions(device);
     await user.unreadMail();
     await getTimetable(device);
     await Promise.all(user.carico_didattico.corsi.map(corso => corso.populate()));
