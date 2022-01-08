@@ -15,7 +15,8 @@ const defaultDeviceData: DeviceData = {
     manufacturer: "Apple",
 };
 
-type RequestLogger = (event: {endpoint: string, request: string, response: string}) => void;
+type Entry = { endpoint: string, request: { [key: string]: any }, response: { [key: string]: any } }
+type RequestLogger = (entry: Entry) => void;
 
 export default class Device {
     uuid: string
@@ -42,8 +43,8 @@ export default class Device {
         const register_data = await post(this.base_url, "register.php", data);
         this.request_logger({
             endpoint: "register.php",
-            request: JSON.stringify(data),
-            response: JSON.stringify(register_data),
+            request: data,
+            response: register_data,
         });
         checkError(register_data);
 
@@ -62,8 +63,8 @@ export default class Device {
         const user_data = (await post(this.base_url, "login.php", data));
         this.request_logger({
             endpoint: "login.php",
-            request: JSON.stringify(data),
-            response: JSON.stringify(user_data),
+            request: data,
+            response: user_data,
         });
         checkError(user_data);
 
@@ -93,8 +94,8 @@ export default class Device {
         const user_data = (await post(this.base_url, "login.php", data));
         this.request_logger({
             endpoint: "login.php",
-            request: JSON.stringify(data),
-            response: JSON.stringify(user_data),
+            request: data,
+            response: user_data,
         });
         checkError(user_data);
 
@@ -115,8 +116,8 @@ export default class Device {
         const response = await post(this.base_url, endpoint, Object.assign({ regID: this.uuid, token: this.token! }, data));
         this.request_logger({
             endpoint,
-            request: JSON.stringify(data),
-            response: JSON.stringify(response),
+            request: data,
+            response: response,
         });
         return response;
     }
