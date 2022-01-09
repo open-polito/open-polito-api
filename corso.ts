@@ -20,6 +20,7 @@ export type File = {
 
 export type Cartella = {
     tipo: "cartella"
+    code: string
     nome: string
     file: (File | Cartella)[]
 }
@@ -39,6 +40,7 @@ function parseMateriale(item: any): File|Cartella {
         case "DIR":
             return {
                 tipo: "cartella",
+                code: item.code,
                 nome: item.descrizione,
                 file: item.files.map(it => parseMateriale(it))
             } as Cartella;
