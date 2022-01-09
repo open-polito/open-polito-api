@@ -3,8 +3,8 @@ import { checkError } from "./utils.js";
 import { parse as parseDate } from "date-format-parse";
 
 export type ExamSession = {
-    session_id: number
-    exam_id: string // 01URPOV
+    session_id: number // A unique ID for this session
+    course_id: string // 01URPOV
     signup_id: number // Unknown value
     exam_name: string // 'Machine learning for vision and multimedia (AA-ZZ)'
     user_is_signed_up: boolean
@@ -26,7 +26,7 @@ export async function getExamSessions(device: Device): Promise<ExamSession[]> {
     checkError(data);
     return data.data.esami.data.map(e => ({
         session_id: e.ID_VERBALE,
-        exam_id: e.COD_INS_STUDENTE,
+        course_id: e.COD_INS_STUDENTE,
         signup_id: e.ID,
         exam_name: e.NOME_INS,
         user_is_signed_up: e.ID != -1,
