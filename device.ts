@@ -1,7 +1,7 @@
 import { checkError, post } from "./utils.js";
 import User from "./user.js";
 
-type DeviceData = {
+export type DeviceData = {
     platform: string,
     version: string,
     model: string,
@@ -15,8 +15,8 @@ const defaultDeviceData: DeviceData = {
     manufacturer: "Apple",
 };
 
-type Entry = { endpoint: string, request: { [key: string]: any }, response: { [key: string]: any } }
-type RequestLogger = (entry: Entry) => void;
+export type Entry = { endpoint: string, request: { [key: string]: any }, response: { [key: string]: any } }
+export type RequestLogger = (entry: Entry) => void;
 
 export default class Device {
     uuid: string

@@ -6,7 +6,7 @@ import Device from "./device";
 import { Booking, getBookings } from "./booking.js";
 import { parse as parseDate } from "date-format-parse";
 
-type Anagrafica = {
+export type Anagrafica = {
     matricola: string, // Es. "123456",
     matricole: string[], // La lista di matricole (es. triennale+magistrale)
     nome: string, // "Mario"

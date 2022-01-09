@@ -2,7 +2,7 @@ import { Device } from ".";
 import { checkError } from "./utils.js";
 import { parse as parseDate } from "date-format-parse";
 
-type ExamSession = {
+export type ExamSession = {
     session_id: number
     exam_id: string // 01URPOV
     signup_id: number // Unknown value

@@ -2,7 +2,7 @@ import Device from "./device";
 import { checkError } from "./utils.js";
 import { parse as parseDate } from "date-format-parse";
 
-type TimetableSlot = {
+export type TimetableSlot = {
     start_time: Date // '15/12/2021 13:00:00'
     end_time: Date
     type: string // 'Lezione/Esercitazione'

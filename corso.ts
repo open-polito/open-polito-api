@@ -2,13 +2,13 @@ import Device from "./device";
 import { checkError } from "./utils.js";
 import { parse as parseDate } from "date-format-parse"
 
-type Avviso = {
+export type Avviso = {
     id: number
     data: Date
     info: string // In raw HTML
 }
 
-type File = {
+export type File = {
     tipo: "file"
     code: string
     filename: string // Nome interno del file
@@ -18,7 +18,7 @@ type File = {
     data_inserimento: Date
 }
 
-type Cartella = {
+export type Cartella = {
     tipo: "cartella"
     nome: string
     file: (File | Cartella)[]
@@ -47,7 +47,7 @@ function parseMateriale(item: any): File|Cartella {
     }
 }
 
-type Videolezione = {
+export type Videolezione = {
     titolo: string
     data: Date
     url: string
@@ -55,7 +55,7 @@ type Videolezione = {
     durata: number // In minuti
 }
 
-type VirtualClassroomRecording = Videolezione
+export type VirtualClassroomRecording = Videolezione
 
 function parseRecording(item: any): VirtualClassroomRecording {
     const duration_parts = item.duration.match(/^(\d+)h (\d+)m$/);
@@ -96,7 +96,7 @@ class LiveVCLesson {
     }
 }
 
-type CourseInfoParagraph = {
+export type CourseInfoParagraph = {
     title: string
     text: string
 }

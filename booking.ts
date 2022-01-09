@@ -2,9 +2,9 @@ import Device from "./device";
 import { checkError } from "./utils.js";
 import { parse as parseDate } from "date-format-parse"
 
-type BookingContextID = "AULE_STUDIO" | "LEZIONI" | string
+export type BookingContextID = "AULE_STUDIO" | "LEZIONI" | string
 
-type BookingSubcontext = {
+export type BookingSubcontext = {
     id: string
     ita: {
         title: string
@@ -23,7 +23,7 @@ type BookingSubcontext = {
     has_seat_selection: boolean
 }
 
-type BookingContext = {
+export type BookingContext = {
     id: string
     ita: {
         title: string
@@ -36,7 +36,7 @@ type BookingContext = {
     subcontexts?: BookingSubcontext[] // may be undefined, eg. for lessons
 }
 
-type BookingSlot = {
+export type BookingSlot = {
     slot_start: Date
     slot_end: Date
     bookable_from: Date
@@ -46,7 +46,7 @@ type BookingSlot = {
     seatsTaken: number
 }
 
-class Booking {
+export class Booking {
     // Example values are reported for a booking for a study room
     context_id: BookingContextID // "AULE_STUDIO"
     context_name: string         // "Prenotazione posti in sale studio"
@@ -61,7 +61,7 @@ class Booking {
     }
 }
 
-async function getBookings(device: Device): Promise<Booking[]> {
+export async function getBookings(device: Device): Promise<Booking[]> {
     const bookings_data = await device.post("booking_api.php", { operazione: "getBookings" });
     checkError(bookings_data);
     return bookings_data.data.booking_api.data.map(b => {
@@ -82,7 +82,7 @@ async function getBookings(device: Device): Promise<Booking[]> {
     });
 }
 
-async function getContexts(device: Device): Promise<BookingContext[]> {
+export async function getContexts(device: Device): Promise<BookingContext[]> {
     const bookings_data = await device.post("booking_api.php", { operazione: "getAmbiti" });
     checkError(bookings_data);
     return bookings_data.data.booking_api.ambiti.map(c => ({
@@ -111,7 +111,7 @@ async function getContexts(device: Device): Promise<BookingContext[]> {
     }) as BookingContext);
 }
 
-async function getSlots(device: Device, context_id: string, subcontext_id?: string, date: Date = new Date()): Promise<BookingSlot[]> {
+export async function getSlots(device: Device, context_id: string, subcontext_id?: string, date: Date = new Date()): Promise<BookingSlot[]> {
     let input: any = {
         operazione: "getTurni",
         ambito: context_id,
@@ -131,5 +131,3 @@ async function getSlots(device: Device, context_id: string, subcontext_id?: stri
         seatsTaken: t.postiOccupati,
     }) as BookingSlot) || [];
 }
-
-export { Booking, BookingSlot, BookingContext, BookingSubcontext, getBookings, getContexts, getSlots };
