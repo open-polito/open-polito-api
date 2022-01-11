@@ -185,6 +185,11 @@ export default class Corso {
             }) as CourseInfoParagraph) : [];
     }
 
+    // Returns true for Tesi and Tirocinio
+    is_dummy_course(): boolean {
+        return this.categoria == "T" || this.categoria == "A";
+    }
+
     // Returns a download URL.
     async download(file: File | Number): Promise<string> {
         let code;
