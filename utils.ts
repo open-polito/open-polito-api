@@ -22,5 +22,16 @@ export async function post(base_url: string, endpoint: string, data: {[key: stri
 export async function checkError(data: {esito: object}) {
     for (const key in data.esito)
         if (data.esito[key].stato < 0)
-            throw new Error(`Esito negativo: ${data.esito[key].error} (${key}=${data.esito[key].stato})`);
+            throw new UpstreamError(data.esito[key].error, data.esito[key].stato);
+}
+
+// https://stackoverflow.com/a/41429145
+export class UpstreamError extends Error {
+    code: number
+
+    constructor(msg: string, code: number) {
+        super(msg);
+        this.code = code;
+        Object.setPrototypeOf(this, UpstreamError.prototype);
+    }
 }
