@@ -19,6 +19,11 @@ export async function post(base_url: string, endpoint: string, data: {[key: stri
     return ret;
 }
 
+export async function ping(base_url = "https://app.didattica.polito.it/"): Promise<void> {
+    const data = await post(base_url, "ping.php", {});
+    checkError(data);
+}
+
 export async function checkError(data: {esito: object}) {
     for (const key in data.esito)
         if (data.esito[key].stato < 0)

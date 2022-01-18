@@ -46,7 +46,7 @@ An open source, **unofficial** API for Politecnico di Torino.
  - [ ] /orari_lezioni_pub.php
  - [ ] /percorsi_formativi.php
  - [ ] /piano_studi.php
- - [ ] /ping.php
+ - [x] /ping.php
  - [ ] /pref_notifiche.php
  - [ ] /prenota.php
  - [x] /register.php
