@@ -19,4 +19,5 @@ const device = new Device("ea27a150-39d5-4f6a-ae1e-51f38bfe0039", () => {});
     await user.updateBookings();
     console.log("Bookings:", user.bookings);
     console.log(await getSlots(user.device, "AULE_STUDIO", "AS_LINGOTTO_2", new Date("2021-12-21T12:03:04.564Z")));
+    await device.logout();
 })();

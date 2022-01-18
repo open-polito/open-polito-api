@@ -112,6 +112,10 @@ export default class Device {
         return { user, token };
     }
 
+    async logout(): Promise<void> {
+        await this.post("logout.php", {});
+    }
+
     async post(endpoint: string, data: { [key: string]: any }): Promise<any> {
         const response = await post(this.base_url, endpoint, Object.assign({ regID: this.uuid, token: this.token! }, data));
         this.request_logger({
