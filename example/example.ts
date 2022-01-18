@@ -3,7 +3,7 @@ import Device from "../device.js";
 import { getTimetable } from "../timetable.js";
 import { ping } from "../utils.js";
 
-const device = new Device("ea27a150-39d5-4f6a-ae1e-51f38bfe0039", () => {});
+const device = new Device("ea27a150-39d5-4f6a-ae1e-51f38bfe0039");
 (async () => {
     await ping();
     await device.register();

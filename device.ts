@@ -19,13 +19,15 @@ export type Entry = { endpoint: string, request: { [key: string]: any }, respons
 export type RequestLogger = (entry: Entry) => void;
 
 export default class Device {
-    uuid: string
+    uuid: string;
     token?: string;
+    timeout: number;
     request_logger: RequestLogger;
     base_url: string;
 
-    constructor(uuid: string, request_logger: RequestLogger = () => { }, base_url = "https://app.didattica.polito.it/") {
+    constructor(uuid: string, timeout: number = 3000, request_logger: RequestLogger = () => { }, base_url = "https://app.didattica.polito.it/") {
         this.uuid = uuid;
+        this.timeout = timeout;
         this.request_logger = request_logger;
         this.base_url = base_url;
     }
@@ -117,7 +119,7 @@ export default class Device {
     }
 
     async post(endpoint: string, data: { [key: string]: any }): Promise<any> {
-        const response = await post(this.base_url, endpoint, Object.assign({ regID: this.uuid, token: this.token! }, data));
+        const response = await post(this.base_url, endpoint, Object.assign({ regID: this.uuid, token: this.token! }, data), this.timeout);
         this.request_logger({
             endpoint,
             request: data,

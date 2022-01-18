@@ -8,7 +8,7 @@ const password = "password";
 
 const log_entries: { endpoint: string, request: string, response: string }[] = [];
 const logger = entry => { console.log(entry); log_entries.push(entry); }
-const device = new Device("ea27a150-39d5-4f6a-ae1e-51f38bfe0039", logger);
+const device = new Device("ea27a150-39d5-4f6a-ae1e-51f38bfe0039", 3000, logger);
 
 (async () => {
     await device.register();
