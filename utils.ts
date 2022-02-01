@@ -1,7 +1,5 @@
 import fetch from "isomorphic-unfetch";
 
-const DEBUG = false;
-
 // Do not use this directly, prefer Device.post.
 export async function post(base_url: string, endpoint: string, data: {[key: string]: any}, timeout: number = 3000): Promise<any> {
     // Handles timeouts in fetch(). https://www.npmjs.com/package/node-fetch#request-cancellation-with-abortsignal
@@ -10,8 +8,6 @@ export async function post(base_url: string, endpoint: string, data: {[key: stri
         controller.abort();
     }, timeout);
 
-    if (DEBUG)
-        console.log("> POST " + endpoint);
     let req: Response;
     try {
         req = await fetch(base_url + endpoint, {
@@ -25,10 +21,7 @@ export async function post(base_url: string, endpoint: string, data: {[key: stri
     } finally {
         clearTimeout(timeoutFn);
     }
-    const ret = JSON.parse(await req.text());
-    if (DEBUG)
-        console.log("< ", ret);
-    return ret;
+    return JSON.parse(await req.text());
 }
 
 export async function ping(base_url = "https://app.didattica.polito.it/"): Promise<void> {
