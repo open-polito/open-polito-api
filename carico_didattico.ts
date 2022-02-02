@@ -1,4 +1,4 @@
-import Corso from "./corso";
+import { Corso } from "./corso";
 
 export class CaricoDidattico {
     corsi: Corso[];

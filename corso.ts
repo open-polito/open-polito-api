@@ -1,5 +1,5 @@
-import Device from "./device";
-import { checkError } from "./utils.js";
+import { Device } from "./device";
+import { checkError } from "./utils";
 import { parse as parseDate } from "date-format-parse"
 
 export type Avviso = {
@@ -73,7 +73,7 @@ function parseRecording(item: any): VirtualClassroomRecording {
     } as VirtualClassroomRecording;
 }
 
-class LiveVCLesson {
+export class LiveVCLesson {
     id_inc: number;
     meeting_id: string;
     title: string;
@@ -103,7 +103,7 @@ export type CourseInfoParagraph = {
     text: string
 }
 
-export default class Corso {
+export class Corso {
     device: Device
     nome: string
     codice: string

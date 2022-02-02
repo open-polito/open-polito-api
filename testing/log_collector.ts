@@ -1,7 +1,7 @@
-import { getContexts, getSlots } from "../booking.js";
-import Device from "../device.js";
-import { getExamSessions } from "../exam_sessions.js";
-import { getTimetable } from "../timetable.js";
+import { getContexts, getSlots } from "../booking";
+import { Device } from "../device";
+import { getExamSessions } from "../exam_sessions";
+import { getTimetable } from "../timetable";
 
 const username = "S123456";
 const password = "password";

@@ -1,7 +1,7 @@
-import { getSlots } from "../booking.js";
-import Device from "../device.js";
-import { getTimetable } from "../timetable.js";
-import { ping } from "../utils.js";
+import { getSlots } from "../booking";
+import { Device } from "../device";
+import { getTimetable } from "../timetable";
+import { ping } from "../utils";
 
 const device = new Device("ea27a150-39d5-4f6a-ae1e-51f38bfe0039");
 (async () => {

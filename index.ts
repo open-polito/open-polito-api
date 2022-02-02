@@ -1,4 +1,11 @@
-import Device from "./device";
-export {
-    Device
-};
+export * as booking from "./booking";
+export * as carico_didattico from "./carico_didattico";
+export * as corso from "./corso";
+export * as device from "./device";
+export * as exam_sessions from "./exam_sessions";
+export * as index from "./index";
+export * as libretto from "./libretto";
+export * as notifications from "./notifications";
+export * as timetable from "./timetable";
+export * as user from "./user";
+export * as utils from "./utils";
