@@ -6,25 +6,37 @@ import { Device } from "./device";
 import { Booking, getBookings } from "./booking";
 import { parse as parseDate } from "date-format-parse";
 
-export type Anagrafica = {
-    matricola: string, // Es. "123456",
-    matricole: string[], // La lista di matricole (es. triennale+magistrale)
-    nome: string, // "Mario"
-    cognome: string, // "ROSSI"
-    tipo_corso_laurea: string, // "Corso di Laurea in"
-    nome_corso_laurea: string, // "INGEGNERIA INFORMATICA"
+export type PersonalData = {
+    /**
+     * The current student ID (it: matricola)
+     * 
+     * @example 123456
+     */
+    current_id: string,
+    /** Past and present student IDs */
+    ids: string[],
+    name: string,
+    surname: string,
+    /** The type of degree (BSc or MSc), in Italian
+     * 
+     * @example "Corso di Laurea in"
+     */
+    degree_type: string,
+    /** The name of the degree, in Italian
+     * 
+     * @example "INGEGNERIA INFORMATICA"
+    */
+    degree_name: string,
 }
 
 export class User {
     device: Device
-    anagrafica: Anagrafica
     libretto!: Libretto;
     carico_didattico!: CaricoDidattico
     bookings: Booking[]
 
-    constructor(device: Device, anagrafica: Anagrafica) {
+    constructor(device: Device) {
         this.device = device;
-        this.anagrafica = anagrafica;
         this.bookings = [];
     }
 

@@ -1,5 +1,5 @@
 import { checkError, post } from "./utils";
-import { User } from "./user";
+import { PersonalData } from "./user";
 
 export type DeviceData = {
     platform: string,
@@ -53,7 +53,7 @@ export class Device {
     }
 
     async loginWithCredentials(username: string, password: string): Promise<{
-        user: User,
+        data: PersonalData,
         token: string
     }> {
         const data = {
@@ -72,19 +72,21 @@ export class Device {
 
         const token = user_data.data.login.token;
         this.token = token;
-        const user = new User(this, {
-            matricola: user_data.data.anagrafica.matricola,
-            matricole: user_data.data.anagrafica.all_matricolas,
-            nome: user_data.data.anagrafica.nome,
-            cognome: user_data.data.anagrafica.cognome,
-            tipo_corso_laurea: user_data.data.anagrafica.tipo_corso_laurea,
-            nome_corso_laurea: user_data.data.anagrafica.nome_corso_laurea,
-        });
-        return {user, token};
+        return {
+            data: {
+                current_id: user_data.data.anagrafica.matricola,
+                ids: user_data.data.anagrafica.all_matricolas,
+                name: user_data.data.anagrafica.nome,
+                surname: user_data.data.anagrafica.cognome,
+                degree_type: user_data.data.anagrafica.tipo_corso_laurea,
+                degree_name: user_data.data.anagrafica.nome_corso_laurea,
+            },
+            token
+        };
     }
 
     async loginWithToken(username: string, login_token: string): Promise<{
-        user: User,
+        data: PersonalData,
         token: string
     }> {
         const data = {
@@ -103,15 +105,17 @@ export class Device {
 
         const token = user_data.data.login.token;
         this.token = token;
-        const user = new User(this, {
-            matricola: user_data.data.anagrafica.matricola,
-            matricole: user_data.data.anagrafica.all_matricolas,
-            nome: user_data.data.anagrafica.nome,
-            cognome: user_data.data.anagrafica.cognome,
-            tipo_corso_laurea: user_data.data.anagrafica.tipo_corso_laurea,
-            nome_corso_laurea: user_data.data.anagrafica.nome_corso_laurea,
-        });
-        return { user, token };
+        return {
+            data: {
+                current_id: user_data.data.anagrafica.matricola,
+                ids: user_data.data.anagrafica.all_matricolas,
+                name: user_data.data.anagrafica.nome,
+                surname: user_data.data.anagrafica.cognome,
+                degree_type: user_data.data.anagrafica.tipo_corso_laurea,
+                degree_name: user_data.data.anagrafica.nome_corso_laurea,
+            },
+            token
+        };
     }
 
     async logout(): Promise<void> {
