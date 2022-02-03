@@ -29,7 +29,7 @@ export async function ping(base_url = "https://app.didattica.polito.it/"): Promi
     checkError(data);
 }
 
-export async function checkError(data: {esito: object}) {
+export function checkError(data: {esito: object}) {
     for (const key in data.esito)
         if (data.esito[key].stato < 0)
             throw new UpstreamError(data.esito[key].error, data.esito[key].stato);
