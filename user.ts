@@ -81,25 +81,26 @@ export class User {
     async updateBookings() {
         this.bookings = await getBookings(this.device);
     }
+}
 
-    // Numero di mail totali e non lette
-    async unreadMail(): Promise<{
-        total: number,
-        unread: number
-    }> {
-        const data = await this.device.post("mail.php", {});
-        // Todo: mappare gli esiti fallimentari
-        checkError(data);
+/**
+ * @returns The total number of emails and the number of unread ones.
+ */
+export async function getUnreadMail(device: Device): Promise<{total: number, unread: number}> {
+    const data = await device.post("mail.php", {});
+    checkError(data);
 
-        return {
-            total: data.data.mail.messages,
-            unread: data.data.mail.unread,
-        };
-    }
+    return {
+        total: data.data.mail.messages,
+        unread: data.data.mail.unread,
+    };
+}
 
-    async emailUrl(): Promise<string> {
-        const data = await this.device.post("goto_webmail.php", {});
-        checkError(data);
-        return data.data.url;
-    }
+/**
+ * @returns An URL to open the Web email client (different for each user).
+ */
+export async function emailUrl(device: Device): Promise<string> {
+    const data = await device.post("goto_webmail.php", {});
+    checkError(data);
+    return data.data.url;
 }
