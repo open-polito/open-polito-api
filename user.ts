@@ -1,6 +1,6 @@
 import { checkError } from "./utils";
 import { EsameProvvisorio, EsameSostenuto, Libretto } from "./libretto";
-import { Corso } from "./corso";
+import { BasicCourseInformation } from "./corso";
 import { CaricoDidattico } from "./carico_didattico";
 import { Device } from "./device";
 import { Booking, getBookings } from "./booking";
@@ -54,15 +54,24 @@ export class User {
         } as EsameSostenuto));
         this.carico_didattico = new CaricoDidattico();
         const standard_courses = vote_data.data.carico_didattico;
-        this.carico_didattico.corsi = standard_courses.map(c => new Corso(
-            this.device, c.nome_ins, c.cod_ins, c.n_cfe, c.id_inc_1, c.categoria, c.overbooking != "N"
-        ));
+        this.carico_didattico.corsi = standard_courses.map(c => ({
+            name: c.nome_ins,
+            code: c.cod_ins,
+            num_credits: c.n_cfe,
+            id_incarico: c.id_inc_1,
+            category: c.categoria,
+            overbooking: c.overbooking !== "N",
+        }) as BasicCourseInformation);
         let extra_courses: any[] = [];
         for (const year in vote_data.data.altri_corsi)
             extra_courses = extra_courses.concat(vote_data.data.altri_corsi[year]);
-        this.carico_didattico.extra_courses = extra_courses.map(c => new Corso(
-            this.device, c.nome_ins_1, c.cod_ins, c.n_cfe, c.id_inc_1
-        )) || [];
+        this.carico_didattico.extra_courses = extra_courses.map(c => ({
+            name: c.nome_ins_1,
+            code: c.cod_ins,
+            num_credits: c.n_cfe,
+            id_incarico: c.id_inc_1,
+            overbooking: false,
+        }) as BasicCourseInformation) || [];
 
         const prov_data = await this.device.post("valutazioni.php", {});
         checkError(prov_data);

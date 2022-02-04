@@ -1,6 +1,6 @@
-import { Corso } from "./corso";
+import { BasicCourseInformation } from "./corso";
 
 export class CaricoDidattico {
-    corsi: Corso[];
-    extra_courses: Corso[];
+    corsi: BasicCourseInformation[];
+    extra_courses: BasicCourseInformation[];
 }
