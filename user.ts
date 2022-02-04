@@ -1,6 +1,6 @@
 import { checkError } from "./utils";
 import { EsameProvvisorio, EsameSostenuto, Libretto } from "./libretto";
-import { BasicCourseInformation } from "./corso";
+import { BasicCourseInformation } from "./course";
 import { CaricoDidattico } from "./carico_didattico";
 import { Device } from "./device";
 import { Booking, getBookings } from "./booking";

@@ -1,4 +1,4 @@
-import { BasicCourseInformation } from "./corso";
+import { BasicCourseInformation } from "./course";
 
 export class CaricoDidattico {
     corsi: BasicCourseInformation[];

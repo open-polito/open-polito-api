@@ -1,47 +1,7 @@
 import { Device } from "./device";
 import { checkError } from "./utils";
 import { parse as parseDate } from "date-format-parse"
-
-export type File = {
-    tipo: "file"
-    code: string
-    filename: string // Nome interno del file
-    nome: string     // Nome da presentare all'utente
-    mime_type: string
-    size_kb: number
-    data_inserimento: Date
-}
-
-export type Cartella = {
-    tipo: "cartella"
-    code: string
-    nome: string
-    file: (File | Cartella)[]
-}
-
-function parseMateriale(item: any): File|Cartella {
-    switch (item.tipo) {
-        case "FILE":
-            return {
-                tipo: "file",
-                code: item.code,
-                filename: item.nomefile,
-                nome: item.descrizione,
-                mime_type: item.cont_type,
-                size_kb: item.size_kb,
-                data_inserimento: parseDate(item.data_ins, "YYYY/MM/DD hh:mm:ss")
-            } as File;
-        case "DIR":
-            return {
-                tipo: "cartella",
-                code: item.code,
-                nome: item.descrizione,
-                file: item.files.map(it => parseMateriale(it))
-            } as Cartella;
-        default:
-            throw new Error("Unknown file type " + item.tipo);
-    }
-}
+import { MaterialItem, parseMaterial } from "./material";
 
 export type Videolezione = {
     titolo: string
@@ -92,19 +52,6 @@ export class LiveVCLesson {
     }
 }
 
-// Returns a download URL.
-export async function download(device: Device, file: File | Number): Promise<string> {
-    let code;
-    if (typeof file == "object") {
-        code = (file as File).code;
-    } else {
-        code = file;
-    }
-    const data = await device.post("download.php", { code })
-    checkError(data);
-    return data.data.directurl;
-}
-
 export type BasicCourseInformation = {
     name: string
     code: string
@@ -143,7 +90,7 @@ export type CourseInformation = {
     professor_name: string
     professor_surname: string
     notices: Notice[]
-    material: (File | Cartella)[]
+    material: MaterialItem[]
     /** One or more live lessons that are being streamed */
     live_lessons: LiveVCLesson[]
     /** Recordings of in-class lessons (it: videolezioni) */
@@ -183,7 +130,7 @@ export async function getExtendedCourseInformation(device: Device, course: Basic
             date: parseDate(a.data_inizio, "DD/MM/YYYY").getTime(),
             text: a.info,
         }) as Notice) || [],
-        material: data.data.materiale?.map(item => parseMateriale(item)) || [],
+        material: data.data.materiale?.map(item => parseMaterial(item)) || [],
         live_lessons: data.data.virtualclassroom?.live.map(vc => new LiveVCLesson(vc.id_inc, vc.meetingid, vc.titolo, vc.data)) || [],
         recordings: data.data.videolezioni?.lista_videolezioni?.map(item => {
             const duration_parts = item.duration.match(/^(\d+)h (\d+)m$/)
