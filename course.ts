@@ -1,6 +1,6 @@
 import { Device } from "./device.js";
 import { checkError } from "./utils.js";
-import { parse as parseDate } from "date-format-parse"
+import { parse as parseDate } from "date-format-parse";
 import { MaterialItem, parseMaterial } from "./material.js";
 
 /** A recording of a lesson (either in-class or over Zoom/BBB) */
@@ -16,17 +16,17 @@ export type Recording = {
 }
 
 function parseVCRecording(item: any): Recording {
-    const duration_parts = item.duration.match(/^(\d+)h (\d+)m$/);
-    let duration = 0;
-    if (duration_parts !== null)
-        duration = 60 * parseInt(duration_parts[1]) + parseInt(duration_parts[2]);
-    return {
-        title: item.titolo,
-        date: parseDate(item.data, "DD/MM/YYYY hh:mm").getTime(),
-        url: item.video_url,
-        cover_url: item.cover_url,
-        length: duration
-    };
+	const duration_parts = item.duration.match(/^(\d+)h (\d+)m$/);
+	let duration = 0;
+	if (duration_parts !== null)
+		duration = 60 * parseInt(duration_parts[1]) + parseInt(duration_parts[2]);
+	return {
+		title: item.titolo,
+		date: parseDate(item.data, "DD/MM/YYYY hh:mm").getTime(),
+		url: item.video_url,
+		cover_url: item.cover_url,
+		length: duration
+	};
 }
 
 /** A live lesson being streamed over Zoom/BBB */
@@ -39,6 +39,8 @@ export type LiveLesson = {
 }
 
 /**
+ * @param device
+ * @param lesson
  * @returns An object containing:
  *  - url: a link to the Zoom interface
  *  - running: false if the meeting has been created but not started
@@ -47,12 +49,12 @@ export async function getLessonURL(device: Device, lesson: LiveLesson): Promise<
     url: string,
     running: boolean,
 }> {
-    const data = await device.post("goto_virtualclassroom.php", { id_inc: lesson.id_incarico, meetingid: lesson.meeting_id });
-    checkError(data);
-    return {
-        running: data.data.isrunning,
-        url: data.data.url,
-    };
+	const data = await device.post("goto_virtualclassroom.php", { id_inc: lesson.id_incarico, meetingid: lesson.meeting_id });
+	checkError(data);
+	return {
+		running: data.data.isrunning,
+		url: data.data.url,
+	};
 }
 
 export type BasicCourseInformation = {
@@ -81,7 +83,8 @@ export type Notice = {
 export type CourseInformation = {
     /** The calendar year when this course finishes */
     calendar_year: string
-    /** The year in the degree when this course takes place
+    /**
+     * The year in the degree when this course takes place
      * 
      * @remarks
      * 
@@ -107,60 +110,69 @@ export type CourseInformation = {
     info: CourseInfoParagraph[]
 }
 
-/** Returns whether the course is fictitious (thesis, internship, etc.) */
+/**
+ * Returns whether the course is fictitious (thesis, internship, etc.)
+ *
+ * @param course
+ */
 export function is_dummy(course: BasicCourseInformation): boolean {
-    return course.category === "T" || course.category === "A";
+	return course.category === "T" || course.category === "A";
 }
 
-/** Fetches information about a course obtained from {@link getCoursesInfo}. */
+/**
+ * Fetches information about a course obtained from {@link getCoursesInfo}.
+ *
+ * @param device
+ * @param course
+ */
 export async function getExtendedCourseInformation(device: Device, course: BasicCourseInformation): Promise<CourseInformation> {
-    const data = await device.post("materia_dettaglio.php",
-        course.id_incarico === null
-            ? { cod_ins: course.code }
-            : { incarico: course.id_incarico });
-    checkError(data);
+	const data = await device.post("materia_dettaglio.php",
+		course.id_incarico === null
+			? { cod_ins: course.code }
+			: { incarico: course.id_incarico });
+	checkError(data);
 
-    const year_parts = data.data.info_corso.periodo.split("-");
-    if (year_parts.length != 2)
-        throw new Error(`Unexpected value for info_corso.periodo: "${data.data.info_corso.periodo}"`);
-    const ret: CourseInformation = {
-        degree_year: year_parts[0],
-        year_period: year_parts[1],
-        calendar_year: data.data.info_corso.a_acc,
-        professor_name: data.data.info_corso.nome_doce,
-        professor_surname: data.data.info_corso.cognome_doce,
-        notices: data.data.avvisi?.map(a => ({
-            date: parseDate(a.data_inizio, "DD/MM/YYYY").getTime(),
-            text: a.info,
-        }) as Notice) || [],
-        material: data.data.materiale?.map(item => parseMaterial(item)) || [],
-        live_lessons: data.data.virtualclassroom?.live.map(vc => ({
-            title: vc.titolo,
-            id_incarico: vc.id_inc,
-            meeting_id: vc.meetingid,
-            date: parseDate(vc.data, "DD/MM/YYYY hh:mm").getTime(),
-        } as LiveLesson)) || [],
-        recordings: data.data.videolezioni?.lista_videolezioni?.map(item => {
-            const duration_parts = item.duration.match(/^(\d+)h (\d+)m$/)
-            const duration = 60 * parseInt(duration_parts[1]) + parseInt(duration_parts[2])
-            return {
-                title: item.titolo,
-                date: parseDate(item.data, item.data.includes(":") ? "DD/MM/YYYY hh:mm" : "DD/MM/YYYY").getTime(),
-                url: item.video_url,
-                cover_url: item.cover_url,
-                length: duration,
-            } as Recording
-        }) || [],
-        vc_recordings: {
-            current: data.data.virtualclassroom?.registrazioni.map(item => parseVCRecording(item)) || []
-        },
-        info: Array.isArray(data.data.guida) ?
-            data.data.guida?.map(p => ({
-                title: p.titolo.replace(course.name, ""),
-                text: p.testo,
-            }) as CourseInfoParagraph) : [],
-    };
-    for (const recordings of data.data.virtualclassroom?.vc_altri_anni || [])
-        ret.vc_recordings[recordings.anno] = recordings.vc.map(item => parseVCRecording(item));
-    return ret;
+	const year_parts = data.data.info_corso.periodo.split("-");
+	if (year_parts.length != 2)
+		throw new Error(`Unexpected value for info_corso.periodo: "${data.data.info_corso.periodo}"`);
+	const ret: CourseInformation = {
+		degree_year: year_parts[0],
+		year_period: year_parts[1],
+		calendar_year: data.data.info_corso.a_acc,
+		professor_name: data.data.info_corso.nome_doce,
+		professor_surname: data.data.info_corso.cognome_doce,
+		notices: data.data.avvisi?.map(a => ({
+			date: parseDate(a.data_inizio, "DD/MM/YYYY").getTime(),
+			text: a.info,
+		}) as Notice) || [],
+		material: data.data.materiale?.map(item => parseMaterial(item)) || [],
+		live_lessons: data.data.virtualclassroom?.live.map(vc => ({
+			title: vc.titolo,
+			id_incarico: vc.id_inc,
+			meeting_id: vc.meetingid,
+			date: parseDate(vc.data, "DD/MM/YYYY hh:mm").getTime(),
+		} as LiveLesson)) || [],
+		recordings: data.data.videolezioni?.lista_videolezioni?.map(item => {
+			const duration_parts = item.duration.match(/^(\d+)h (\d+)m$/);
+			const duration = 60 * parseInt(duration_parts[1]) + parseInt(duration_parts[2]);
+			return {
+				title: item.titolo,
+				date: parseDate(item.data, item.data.includes(":") ? "DD/MM/YYYY hh:mm" : "DD/MM/YYYY").getTime(),
+				url: item.video_url,
+				cover_url: item.cover_url,
+				length: duration,
+			} as Recording;
+		}) || [],
+		vc_recordings: {
+			current: data.data.virtualclassroom?.registrazioni.map(item => parseVCRecording(item)) || []
+		},
+		info: Array.isArray(data.data.guida) ?
+			data.data.guida?.map(p => ({
+				title: p.titolo.replace(course.name, ""),
+				text: p.testo,
+			}) as CourseInfoParagraph) : [],
+	};
+	for (const recordings of data.data.virtualclassroom?.vc_altri_anni || [])
+		ret.vc_recordings[recordings.anno] = recordings.vc.map(item => parseVCRecording(item));
+	return ret;
 }

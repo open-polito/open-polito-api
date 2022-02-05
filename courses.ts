@@ -43,48 +43,48 @@ export type CoursesInfo = {
 };
 
 export async function getCoursesInfo(device: Device): Promise<CoursesInfo> {
-    const vote_data = await device.post("studente.php", {});
-    checkError(vote_data);
-    const provisional_data = await device.post("valutazioni.php", {});
-    checkError(provisional_data);
+	const vote_data = await device.post("studente.php", {});
+	checkError(vote_data);
+	const provisional_data = await device.post("valutazioni.php", {});
+	checkError(provisional_data);
     
-    return {
-        marks: {
-            permanent: vote_data.data.libretto.map(s => ({
-                name: s.nome_ins,
-                num_credits: s.n_cfe,
-                mark: s.desc_voto,
-                date: parseDate(s.d_esame, "DD/MM/YYYY").getTime(),
-            } as PermanentMark)),
-            provisional: provisional_data.data.valutazioni_provvisorie.map(v => ({
-                name: v.NOME_INS,
-                mark: v.VOTO_ESAME,
-                date: parseDate(v.DATA_ESAME, "DD-MM-YYYY").getTime(),
-                failed: v.FALLITO == "S",
-                absent: v.ASSENTE == "S",
-                state: v.STATO,
-                professor_id: v.MAT_DOCENTE,
-                message: v.T_MESSAGGIO,
-            } as ProvisionalMark)),
-        },
-        course_plan: {
-            standard: vote_data.data.carico_didattico.map(c => ({
-                name: c.nome_ins,
-                code: c.cod_ins,
-                num_credits: c.n_cfe,
-                id_incarico: c.id_inc_1,
-                category: c.categoria,
-                overbooking: c.overbooking !== "N",
-            }) as BasicCourseInformation),
-            extra: Object.keys(vote_data.data.altri_corsi)
-                .map(year => vote_data.data.altri_corsi[year])
-                .map(c => ({
-                    name: c.nome_ins_1,
-                    code: c.cod_ins,
-                    num_credits: c.n_cfe,
-                    id_incarico: c.id_inc_1,
-                    overbooking: false,
-                }) as BasicCourseInformation) || [],
-        },
-    };
+	return {
+		marks: {
+			permanent: vote_data.data.libretto.map(s => ({
+				name: s.nome_ins,
+				num_credits: s.n_cfe,
+				mark: s.desc_voto,
+				date: parseDate(s.d_esame, "DD/MM/YYYY").getTime(),
+			} as PermanentMark)),
+			provisional: provisional_data.data.valutazioni_provvisorie.map(v => ({
+				name: v.NOME_INS,
+				mark: v.VOTO_ESAME,
+				date: parseDate(v.DATA_ESAME, "DD-MM-YYYY").getTime(),
+				failed: v.FALLITO == "S",
+				absent: v.ASSENTE == "S",
+				state: v.STATO,
+				professor_id: v.MAT_DOCENTE,
+				message: v.T_MESSAGGIO,
+			} as ProvisionalMark)),
+		},
+		course_plan: {
+			standard: vote_data.data.carico_didattico.map(c => ({
+				name: c.nome_ins,
+				code: c.cod_ins,
+				num_credits: c.n_cfe,
+				id_incarico: c.id_inc_1,
+				category: c.categoria,
+				overbooking: c.overbooking !== "N",
+			}) as BasicCourseInformation),
+			extra: Object.keys(vote_data.data.altri_corsi)
+				.map(year => vote_data.data.altri_corsi[year])
+				.map(c => ({
+					name: c.nome_ins_1,
+					code: c.cod_ins,
+					num_credits: c.n_cfe,
+					id_incarico: c.id_inc_1,
+					overbooking: false,
+				}) as BasicCourseInformation) || [],
+		},
+	};
 }
