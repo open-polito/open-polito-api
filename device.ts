@@ -15,16 +15,30 @@ const defaultDeviceData: DeviceData = {
     manufacturer: "Apple",
 };
 
+/** A network request */
 export type Entry = { endpoint: string, request: { [key: string]: any }, response: { [key: string]: any } }
+/** A function that logs network requests */
 export type RequestLogger = (entry: Entry) => void;
 
+/** A class with credentials for accessing the upstream API */
 export class Device {
+    /** A unique identifier for the device */
     uuid: string;
+    /** A token for authorizing the user */
     token?: string;
+    /** The request timeout in milliseconds */
     timeout: number;
+    /** A callback for network requests */
     request_logger: RequestLogger;
+    /** The base URL for the API */
     base_url: string;
 
+    /**
+     * @param uuid A unique identifier for the device
+     * @param timeout The request timeout in milliseconds
+     * @param request_logger A callback that is called after network requests
+     * @param base_url The base URL for the API
+     */
     constructor(uuid: string, timeout: number = 3000, request_logger: RequestLogger = () => { }, base_url = "https://app.didattica.polito.it/") {
         this.uuid = uuid;
         this.timeout = timeout;
@@ -32,6 +46,7 @@ export class Device {
         this.base_url = base_url;
     }
 
+    /** Registers the device with the API (may be required to access notifications) */
     async register(deviceData: DeviceData = defaultDeviceData) : Promise<void> {
         const data = {
             regID: this.uuid,
@@ -49,9 +64,9 @@ export class Device {
             response: register_data,
         });
         checkError(register_data);
-
     }
 
+    /** Logs in with username and password */
     async loginWithCredentials(username: string, password: string): Promise<{
         data: PersonalData,
         token: string
@@ -85,6 +100,7 @@ export class Device {
         };
     }
 
+    /** Refreshes an authorization token by returning a new one */
     async loginWithToken(username: string, login_token: string): Promise<{
         data: PersonalData,
         token: string
@@ -118,10 +134,12 @@ export class Device {
         };
     }
 
+    /** Invalidates the token */
     async logout(): Promise<void> {
         await this.post("logout.php", {});
     }
 
+    /** Sends a raw API request, appending the device credentials */
     async post(endpoint: string, data: { [key: string]: any }): Promise<any> {
         const response = await post(this.base_url, endpoint, Object.assign({ regID: this.uuid, token: this.token! }, data), this.timeout);
         this.request_logger({
