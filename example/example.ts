@@ -1,5 +1,5 @@
 import { getBookings, getSlots } from "../booking.js";
-import { getExtendedCourseInformation } from "../course.js";
+import { getExtendedCourseInfo } from "../course.js";
 import { getCoursesInfo } from "../courses.js";
 import { Device } from "../device.js";
 import { getDownloadURL } from "../material.js";
@@ -17,7 +17,7 @@ const device = new Device("ea27a150-39d5-4f6a-ae1e-51f38bfe0039");
 	console.log("Timetable:", await getTimetable(device));
 	const courses_info = await getCoursesInfo(device);
 	console.log("Courses:", courses_info);
-	const course = await getExtendedCourseInformation(device, courses_info.course_plan.standard[2]!);
+	const course = await getExtendedCourseInfo(device, courses_info.course_plan.standard[2]!);
 	console.log("Course:", course);
 	console.log(courses_info.course_plan.standard[2]);
 	console.log(await getDownloadURL(device, 33278489));

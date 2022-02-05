@@ -6,70 +6,70 @@ export type BookingContextID = "AULE_STUDIO" | "LEZIONI" | string
 
 /** A sub-category of things that can be booked */
 export type BookingSubcontext = {
-    id: BookingContextID
-    ita: {
-        name: string
-        /** @example "Gentile Utente, per potersi prenotare è necessario [...] Dichiaro di aver preso visione dell’informativa sopra riportata" */
-        privacy_notice: string
-        /** @example "L'accesso in Ateneo è consentito soltanto se in possesso di [...]" */
-        green_pass_notice: string
-    }
-    eng: {
-        name: string
-        privacy_notice: string
-        green_pass_notice: string
-    }
-    /** The duration of a slot in minutes */
-    slot_duration: number
-    /** The time of day when this subcontext opens (eg. "8" for "Help desk" means the help desk opens at 8 am) in 24-hour format */
-    open_time: number
-    /** The time of day when this subcontext opens in 24-hour format */
-    close_time: number
-    /** How many slots can be booked per day */
-    max_bookings_per_day: number
-    has_seat_selection: boolean
+	id: BookingContextID
+	ita: {
+		name: string
+		/** @example "Gentile Utente, per potersi prenotare è necessario [...] Dichiaro di aver preso visione dell’informativa sopra riportata" */
+		privacy_notice: string
+		/** @example "L'accesso in Ateneo è consentito soltanto se in possesso di [...]" */
+		green_pass_notice: string
+	}
+	eng: {
+		name: string
+		privacy_notice: string
+		green_pass_notice: string
+	}
+	/** The duration of a slot in minutes */
+	slot_duration: number
+	/** The time of day when this subcontext opens (eg. "8" for "Help desk" means the help desk opens at 8 am) in 24-hour format */
+	opening_time: number
+	/** The time of day when this subcontext opens in 24-hour format */
+	closing_time: number
+	/** How many slots can be booked per day */
+	max_bookings_per_day: number
+	has_seat_selection: boolean
 }
 
 /** A category of things that can be booked */
 export type BookingContext = {
-    id: string
-    ita: {
-        name: string
-        description: string
-    }
-    eng: {
-        name: string
-        description: string
-    }
-    /** A list of sub-categories (possibly null, eg. for lessons) */
-    subcontexts?: BookingSubcontext[]
+	id: string
+	ita: {
+		name: string
+		description: string
+	}
+	eng: {
+		name: string
+		description: string
+	}
+	/** A list of sub-categories (possibly null, eg. for lessons) */
+	subcontexts?: BookingSubcontext[]
 }
 
 /** A slot of time when a room may be booked (all times as Unix timestamps) */
 export type BookingSlot = {
-    slot_start: number
-    slot_end: number
-    bookable_from: number
-    bookable_until: number
-    bookable: boolean
-    seatsTotal: number
-    seatsTaken: number
+	slot_start: number
+	slot_end: number
+	bookable_from: number
+	bookable_until: number
+	bookable: boolean
+	seatsTotal: number
+	seatsTaken: number
 }
 
 export type Booking = {
-    // Example values are reported for a booking for a study room
-    /** @example "AULE_STUDIO" */
-    context_id: BookingContextID
-    /** @example "Prenotazione posti in sale studio" */
-    context_name: string
-    /** @example "AS_LINGOTTO_2" */
-    subcontext_id: string
-    /** @example "Lingotto - Sala studio Le Corbusier" */
-    subcontext_name: string
-    start_time: number
-    end_time: number
-    /** @example "01PECQW" (only for lessons) */
-    course_id?: string
+	// Example values are reported for a booking for a study room
+	/** @example "AULE_STUDIO" */
+	context_id: BookingContextID
+	/** @example "Prenotazione posti in sale studio" */
+	context_name: string
+	/** @example "AS_LINGOTTO_2" */
+	subcontext_id: string
+	/** @example "Lingotto - Sala studio Le Corbusier" */
+	subcontext_name: string
+	start_time: number
+	end_time: number
+	/** @example "01PECQW" (only for lessons) */
+	course_id?: string
 }
 
 /**

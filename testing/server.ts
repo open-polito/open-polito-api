@@ -6,7 +6,7 @@ const entries: { endpoint: string, request: string, response: string }[] = JSON.
 const requestListener = function (req, res) {
 	let post_data = "";
 	req.on("data", chunk => { post_data += chunk; });
-	req.on("end", function() {
+	req.on("end", function () {
 		post_data = decodeURIComponent(post_data).substring(5).replace(/"regID":"[0-9a-f-]+","token":"[0-9a-f]+",?/, "");
 		console.log(">", req.url, post_data);
 		if (req.url == "/register.php") {
@@ -25,7 +25,7 @@ const requestListener = function (req, res) {
 			}
 		}
 		res.writeHead(404);
-		res.end(JSON.stringify({esito: {"testing-server": {stato: -1, error: "No log entry matches your request"}}}));
+		res.end(JSON.stringify({ esito: { "testing-server": { stato: -1, error: "No log entry matches your request" } } }));
 	});
 };
 

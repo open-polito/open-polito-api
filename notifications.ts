@@ -3,20 +3,20 @@ import { checkError } from "./utils.js";
 import { parse as parseDate } from "date-format-parse";
 
 export type Notification = {
-    id: number
-    title: string
-    body: string | null
-    /** The category of this notification (eg. official reminder, professor notice, etc) */
-    topic: string
-    /** The time when this notification was created, as Unix epoch */
-    time: number
-    /** Whether the user read this notification from the official app or via {@link markNotificationRead} */
-    is_read: boolean
+	id: number
+	title: string
+	body: string | null
+	/** The category of this notification (eg. official reminder, professor notice, etc) */
+	topic: string
+	/** The time when this notification was created, as Unix epoch */
+	time: number
+	/** Whether the user read this notification from the official app or via {@link markNotificationRead} */
+	is_read: boolean
 }
 
 export type TestNotification = Notification & { topic: "test" }
 export type DirectNotification = Notification & { topic: "individuale" } // CPD, annullare le prenotazioni, etc
-export type NoticeNotification = Notification & { topic: "avvisidoc"; course: number; } // "course" refers to id_incarico
+export type NoticeNotification = Notification & { topic: "avvisidoc"; course: number; } // "course" refers to task_id
 export type MaterialNotification = Notification & { topic: "matdid"; course: number; }
 
 export async function getNotifications(device: Device): Promise<Notification[]> {
