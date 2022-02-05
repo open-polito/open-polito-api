@@ -2,17 +2,22 @@ import { Device } from "./device";
 import { checkError } from "./utils";
 import { parse as parseDate } from "date-format-parse";
 
+/** A slot for a lesson */
 export type TimetableSlot = {
-    start_time: Date // '15/12/2021 13:00:00'
-    end_time: Date
-    type: string // 'Lezione/Esercitazione'
-    subject_title: string
+    /** The start time for the slot, as Unix epoch */
+    start_time: number
+    end_time: number
+    /** @example "Lezione/Esercitazione" */
+    type: string
+    course_name: string
     professor: {
         name: string
         surname: string
     }
-    room: string // 'R1b'
-    room_url: string // 'https://www.polito.it/ateneo/sedi/?bl_id=TO_CIT06&fl_id=XP01&rm_id=006'
+    /** @example "R1b" */
+    room: string
+    /** @example "https://www.polito.it/ateneo/sedi/?bl_id=TO_CIT06&fl_id=XP01&rm_id=006" */
+    room_url: string
 };
 
 export async function getTimetable(device: Device, date: Date = new Date()): Promise<TimetableSlot[]> {
@@ -21,10 +26,10 @@ export async function getTimetable(device: Device, date: Date = new Date()): Pro
     if (data.data.orari === "") // the API returns "" when there are no lessons
         return [];
     return data.data.orari.map(o => ({
-        start_time: parseDate(o.ORA_INIZIO, "DD/MM/YYYY hh:mm:ss"),
-        end_time: parseDate(o.ORA_FINE, "DD/MM/YYYY hh:mm:ss"),
+        start_time: parseDate(o.ORA_INIZIO, "DD/MM/YYYY hh:mm:ss").getTime(),
+        end_time: parseDate(o.ORA_FINE, "DD/MM/YYYY hh:mm:ss").getTime(),
         type: o.TIPOLOGIA_EVENTO,
-        subject_title: o.TITOLO_MATERIA,
+        course_name: o.TITOLO_MATERIA,
         professor: {
             name: o.NOME,
             surname: o.COGNOME,
