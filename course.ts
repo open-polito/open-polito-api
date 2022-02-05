@@ -32,7 +32,7 @@ function parseVCRecording(item: any): Recording {
 /** A live lesson being streamed over Zoom/BBB */
 export type LiveLesson = {
 	title: string;
-	task_id: number;
+	id_incarico: number;
 	meeting_id: string;
 	/** The starting date as Unix epoch */
 	date: number;
@@ -49,7 +49,7 @@ export async function getLessonURL(device: Device, lesson: LiveLesson): Promise<
 	url: string,
 	running: boolean,
 }> {
-	const data = await device.post("goto_virtualclassroom.php", { id_inc: lesson.task_id, meetingid: lesson.meeting_id });
+	const data = await device.post("goto_virtualclassroom.php", { id_inc: lesson.id_incarico, meetingid: lesson.meeting_id });
 	checkError(data);
 	return {
 		running: data.data.isrunning,
@@ -61,7 +61,7 @@ export type BasicCourseInfo = {
 	name: string
 	code: string
 	num_credits: number
-	task_id: number | null
+	id_incarico: number | null
 	category?: string
 	overbooking: boolean
 }
@@ -129,9 +129,9 @@ export function is_dummy(course: BasicCourseInfo): boolean {
  */
 export async function getExtendedCourseInfo(device: Device, course: BasicCourseInfo): Promise<CourseInfo> {
 	const data = await device.post("materia_dettaglio.php",
-		course.task_id === null
+		course.id_incarico === null
 			? { cod_ins: course.code }
-			: { incarico: course.task_id });
+			: { incarico: course.id_incarico });
 	checkError(data);
 
 	const year_parts = data.data.info_corso.periodo.split("-");
@@ -152,7 +152,7 @@ export async function getExtendedCourseInfo(device: Device, course: BasicCourseI
 		material: data.data.materiale?.map(item => parseMaterial(item)) || [],
 		live_lessons: data.data.virtualclassroom?.live.map(vc => ({
 			title: vc.titolo,
-			task_id: vc.id_inc,
+			id_incarico: vc.id_inc,
 			meeting_id: vc.meetingid,
 			date: parseDate(vc.data, "DD/MM/YYYY hh:mm").getTime(),
 		} as LiveLesson)) || [],
