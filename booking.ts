@@ -4,74 +4,92 @@ import { parse as parseDate } from "date-format-parse"
 
 export type BookingContextID = "AULE_STUDIO" | "LEZIONI" | string
 
+/** A sub-category of things that can be booked */
 export type BookingSubcontext = {
-    id: string
+    id: BookingContextID
     ita: {
-        title: string
-        privacy_notice: string // "Gentile Utente, per potersi prenotare è necessario [...] Dichiaro di aver preso visione dell’informativa sopra riportata"
-        green_pass_notice: string // "L'accesso in Ateneo è consentito soltanto se in possesso di [...]"
+        name: string
+        /** @example "Gentile Utente, per potersi prenotare è necessario [...] Dichiaro di aver preso visione dell’informativa sopra riportata" */
+        privacy_notice: string
+        /** @example "L'accesso in Ateneo è consentito soltanto se in possesso di [...]" */
+        green_pass_notice: string
     }
     eng: {
-        title: string
+        name: string
         privacy_notice: string
         green_pass_notice: string
     }
-    slot_duration: number // in minutes
-    open_time: number // time of day when this subcontext opens (eg. "8" for "Help desk" means the help desk opens at 8 am)
-    close_time: number // likewise. 24-hour format
-    max_booking_per_day: number // how many slots can be booked per day
+    /** The duration of a slot in minutes */
+    slot_duration: number
+    /** The time of day when this subcontext opens (eg. "8" for "Help desk" means the help desk opens at 8 am) in 24-hour format */
+    open_time: number
+    /** The time of day when this subcontext opens in 24-hour format */
+    close_time: number
+    /** How many slots can be booked per day */
+    max_bookings_per_day: number
     has_seat_selection: boolean
 }
 
+/** A category of things that can be booked */
 export type BookingContext = {
     id: string
     ita: {
-        title: string
+        name: string
         description: string
     }
     eng: {
-        title: string
+        name: string
         description: string
     }
-    subcontexts?: BookingSubcontext[] // may be undefined, eg. for lessons
+    /** A list of sub-categories (possibly null, eg. for lessons) */
+    subcontexts?: BookingSubcontext[]
 }
 
+/** A slot of time when a room may be booked (all times as Unix timestamps) */
 export type BookingSlot = {
-    slot_start: Date
-    slot_end: Date
-    bookable_from: Date
-    bookable_until: Date
+    slot_start: number
+    slot_end: number
+    bookable_from: number
+    bookable_until: number
     bookable: boolean
     seatsTotal: number
     seatsTaken: number
 }
 
-export class Booking {
+export type Booking = {
     // Example values are reported for a booking for a study room
-    context_id: BookingContextID // "AULE_STUDIO"
-    context_name: string         // "Prenotazione posti in sale studio"
-    subcontext_id: string        // "AS_LINGOTTO_2"
-    subcontext_name: string      // Lingotto - Sala studio Le Corbusier
-    start_time: Date
-    end_time: Date
-    course_id?: string           // "01PECQW" (only for lessons)
-
-    static barcode_url(username: string): string {
-        return `https://didattica.polito.it/bc/barcode.php?barcode=${username}&width=500&height=200&format=gif`
-    }
+    /** @example "AULE_STUDIO" */
+    context_id: BookingContextID
+    /** @example "Prenotazione posti in sale studio" */
+    context_name: string
+    /** @example "AS_LINGOTTO_2" */
+    subcontext_id: string
+    /** @example "Lingotto - Sala studio Le Corbusier" */
+    subcontext_name: string
+    start_time: number
+    end_time: number
+    /** @example "01PECQW" (only for lessons) */
+    course_id?: string
 }
 
+/** Returns a link to a barcode that may be scanned by Polito employees to access bookings */
+export function barcode_url(username: string): string {
+    return `https://didattica.polito.it/bc/barcode.php?barcode=${username}&width=500&height=200&format=gif`
+}
+
+/** Returns a list of bookings made by this user */
 export async function getBookings(device: Device): Promise<Booking[]> {
     const bookings_data = await device.post("booking_api.php", { operazione: "getBookings" });
     checkError(bookings_data);
     return bookings_data.data.booking_api.data.map(b => {
-        const ret = new Booking();
-        ret.context_id = b.id_ambito;
-        ret.context_name = b.descr_ambito;
-        ret.subcontext_id = b.id_subambito;
-        ret.subcontext_name = b.nome_subambito;
-        ret.start_time = new Date(b.d_ini_turno_ts);
-        ret.end_time = new Date(b.d_fin_turno_ts);
+        const ret: Booking = {
+            context_id: b.id_ambito,
+            context_name: b.descr_ambito,
+            subcontext_id: b.id_subambito,
+            subcontext_name: b.nome_subambito,
+            start_time: new Date(b.d_ini_turno_ts).getTime(),
+            end_time: new Date(b.d_fin_turno_ts).getTime(),
+        };
         const matches = b.lezione.match(/<h3><b>([^<]+)<\/h3><\/b>/);
         if (matches != null) {
             const lesson = matches[1];
@@ -82,32 +100,33 @@ export async function getBookings(device: Device): Promise<Booking[]> {
     });
 }
 
+/** Returns a list of booking contexts */
 export async function getContexts(device: Device): Promise<BookingContext[]> {
     const bookings_data = await device.post("booking_api.php", { operazione: "getAmbiti" });
     checkError(bookings_data);
     return bookings_data.data.booking_api.ambiti.map(c => ({
         id: c.id,
         ita: {
-            title: c.titolo_ita,
+            name: c.titolo_ita,
             description: c.descr_ita,
         },
         eng: {
-            title: c.titolo_eng.trim(),
+            name: c.titolo_eng.trim(),
             description: c.descr_eng.trim(),
         },
         subcontexts: c.subambiti?.subambiti?.map(s => ({
             id: s.id,
             ita: {
-                title: s.titolo_ita,
+                name: s.titolo_ita,
                 privacy_notice: s.opt_tpl_privacy,
                 green_pass_notice: s.opt_tpl_gp
             },
             eng: {
-                title: s.titolo_eng.trim(),
+                name: s.titolo_eng.trim(),
                 privacy_notice: s.opt_tpl_privacy,
                 green_pass_notice: s.opt_tpl_gp
             }
-        }) as BookingSubcontext)
+        }) as BookingSubcontext),
     }) as BookingContext);
 }
 
@@ -122,10 +141,10 @@ export async function getSlots(device: Device, context_id: string, subcontext_id
     const bookings_data = await device.post("booking_api.php", input);
     checkError(bookings_data);
     return bookings_data.data.booking_api.turni.map(t => ({
-        slot_start: parseDate(t.d_ini, "DD/MM/YYYY hh:mm"),
-        slot_end: parseDate(t.d_fin, "DD/MM/YYYY hh:mm"),
-        bookable_from: new Date(t.d_ini_preno_ts),
-        bookable_until: new Date(t.d_fin_preno_ts),
+        slot_start: parseDate(t.d_ini, "DD/MM/YYYY hh:mm").getTime(),
+        slot_end: parseDate(t.d_fin, "DD/MM/YYYY hh:mm").getTime(),
+        bookable_from: new Date(t.d_ini_preno_ts).getTime(),
+        bookable_until: new Date(t.d_fin_preno_ts).getTime(),
         bookable: t.bookable,
         seatsTotal: t.posti,
         seatsTaken: t.postiOccupati,
