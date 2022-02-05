@@ -1,10 +1,10 @@
 export * as booking from "./booking";
 export * as carico_didattico from "./carico_didattico";
 export * as corso from "./course";
+export * as courses from "./courses";
 export * as device from "./device";
 export * as exam_sessions from "./exam_sessions";
 export * as index from "./index";
-export * as libretto from "./libretto";
 export * as material from "./material";
 export * as notifications from "./notifications";
 export * as timetable from "./timetable";

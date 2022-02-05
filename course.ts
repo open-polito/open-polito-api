@@ -112,7 +112,7 @@ export function is_dummy(course: BasicCourseInformation): boolean {
     return course.category === "T" || course.category === "A";
 }
 
-/** Fetches information about a course obtained from {@link getBasicInfo}. */
+/** Fetches information about a course obtained from {@link getCoursesInfo}. */
 export async function getExtendedCourseInformation(device: Device, course: BasicCourseInformation): Promise<CourseInformation> {
     const data = await device.post("materia_dettaglio.php",
         course.id_incarico === null
