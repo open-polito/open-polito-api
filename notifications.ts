@@ -3,15 +3,15 @@ import { checkError } from "./utils.js";
 import { parse as parseDate } from "date-format-parse";
 
 export type Notification = {
-    id: number
-    title: string
-    body: string | null
-    /** The category of this notification (eg. official reminder, professor notice, etc) */
-    topic: string
-    /** The time when this notification was created, as Unix epoch */
-    time: number
-    /** Whether the user read this notification from the official app or via {@link markNotificationRead} */
-    is_read: boolean
+	id: number
+	title: string
+	body: string | null
+	/** The category of this notification (eg. official reminder, professor notice, etc) */
+	topic: string
+	/** The time when this notification was created, as Unix epoch */
+	time: number
+	/** Whether the user read this notification from the official app or via {@link markNotificationRead} */
+	is_read: boolean
 }
 
 export type TestNotification = Notification & { topic: "test" }
