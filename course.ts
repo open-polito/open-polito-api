@@ -3,53 +3,56 @@ import { checkError } from "./utils";
 import { parse as parseDate } from "date-format-parse"
 import { MaterialItem, parseMaterial } from "./material";
 
-export type Videolezione = {
-    titolo: string
-    data: Date
+/** A recording of a lesson (either in-class or over Zoom/BBB) */
+export type Recording = {
+    title: string
+    /** Date of recording in Unix epoch */
+    date: number
     url: string
+    /** A link to a cover image */
     cover_url: string
-    durata: number // In minuti
+    /** Length in minutes */
+    length: number
 }
 
-export type VirtualClassroomRecording = Videolezione
-
-function parseRecording(item: any): VirtualClassroomRecording {
+function parseVCRecording(item: any): Recording {
     const duration_parts = item.duration.match(/^(\d+)h (\d+)m$/);
-    let duration = -1;
+    let duration = 0;
     if (duration_parts !== null)
         duration = 60 * parseInt(duration_parts[1]) + parseInt(duration_parts[2]);
     return {
-        titolo: item.titolo,
-        data: parseDate(item.data, "DD/MM/YYYY hh:mm"),
+        title: item.titolo,
+        date: parseDate(item.data, "DD/MM/YYYY hh:mm").getTime(),
         url: item.video_url,
         cover_url: item.cover_url,
-        durata: duration
-    } as VirtualClassroomRecording;
+        length: duration
+    };
 }
 
-export class LiveVCLesson {
-    id_inc: number;
-    meeting_id: string;
+/** A live lesson being streamed over Zoom/BBB */
+export type LiveLesson = {
     title: string;
-    date: Date;
-    url: string;
-    running: boolean;
+    id_incarico: number;
+    meeting_id: string;
+    /** The starting date as Unix epoch */
+    date: number;
+}
 
-    constructor(id_inc: number, meeting_id: string, title: string, date: string) {
-        this.id_inc = id_inc;
-        this.meeting_id = meeting_id;
-        this.title = title;
-        this.date = parseDate(date, "DD/MM/YYYY hh:mm");
-    }
-
-    // Sets .url and .running
-    async populate(device: Device) {
-        const data = await device.post("goto_virtualclassroom.php", { id_inc: this.id_inc, meetingid: this.meeting_id });
-        checkError(data);
-        this.running = data.data.isrunning;
-        this.url = data.data.url;
-        // this.url = `https://didattica.polito.it/pls/portal30/sviluppo.bbb_corsi.joinVirtualClassStudente?p_id_inc=${this.id_inc}&p_meeting_id=${this.meeting_id}`;
-    }
+/**
+ * @returns An object containing:
+ *  - url: a link to the Zoom interface
+ *  - running: false if the meeting has been created but not started
+ */
+export async function getLessonURL(device: Device, lesson: LiveLesson): Promise<{
+    url: string,
+    running: boolean,
+}> {
+    const data = await device.post("goto_virtualclassroom.php", { id_inc: lesson.id_incarico, meetingid: lesson.meeting_id });
+    checkError(data);
+    return {
+        running: data.data.isrunning,
+        url: data.data.url,
+    };
 }
 
 export type BasicCourseInformation = {
@@ -92,13 +95,13 @@ export type CourseInformation = {
     notices: Notice[]
     material: MaterialItem[]
     /** One or more live lessons that are being streamed */
-    live_lessons: LiveVCLesson[]
+    live_lessons: LiveLesson[]
     /** Recordings of in-class lessons (it: videolezioni) */
-    recordings: Videolezione[]
+    recordings: Recording[]
     /** Recordings of BBB/Zoom lessons (it: virtual classroom) */
     vc_recordings: {
-        current: VirtualClassroomRecording[],
-        [year: number]: VirtualClassroomRecording[]
+        current: Recording[],
+        [year: number]: Recording[]
     }
     /** Extended, human-readable information about the course */
     info: CourseInfoParagraph[]
@@ -131,20 +134,25 @@ export async function getExtendedCourseInformation(device: Device, course: Basic
             text: a.info,
         }) as Notice) || [],
         material: data.data.materiale?.map(item => parseMaterial(item)) || [],
-        live_lessons: data.data.virtualclassroom?.live.map(vc => new LiveVCLesson(vc.id_inc, vc.meetingid, vc.titolo, vc.data)) || [],
+        live_lessons: data.data.virtualclassroom?.live.map(vc => ({
+            title: vc.titolo,
+            id_incarico: vc.id_inc,
+            meeting_id: vc.meetingid,
+            date: parseDate(vc.data, "DD/MM/YYYY hh:mm").getTime(),
+        } as LiveLesson)) || [],
         recordings: data.data.videolezioni?.lista_videolezioni?.map(item => {
             const duration_parts = item.duration.match(/^(\d+)h (\d+)m$/)
             const duration = 60 * parseInt(duration_parts[1]) + parseInt(duration_parts[2])
             return {
-                titolo: item.titolo,
-                data: parseDate(item.data, item.data.includes(":") ? "DD/MM/YYYY hh:mm" : "DD/MM/YYYY"),
+                title: item.titolo,
+                date: parseDate(item.data, item.data.includes(":") ? "DD/MM/YYYY hh:mm" : "DD/MM/YYYY").getTime(),
                 url: item.video_url,
                 cover_url: item.cover_url,
-                durata: duration,
-            } as Videolezione
+                length: duration,
+            } as Recording
         }) || [],
         vc_recordings: {
-            current: data.data.virtualclassroom?.registrazioni.map(item => parseRecording(item)) || []
+            current: data.data.virtualclassroom?.registrazioni.map(item => parseVCRecording(item)) || []
         },
         info: Array.isArray(data.data.guida) ?
             data.data.guida?.map(p => ({
@@ -153,6 +161,6 @@ export async function getExtendedCourseInformation(device: Device, course: Basic
             }) as CourseInfoParagraph) : [],
     };
     for (const recordings of data.data.virtualclassroom?.vc_altri_anni || [])
-        ret.vc_recordings[recordings.anno] = recordings.vc.map(item => parseRecording(item));
+        ret.vc_recordings[recordings.anno] = recordings.vc.map(item => parseVCRecording(item));
     return ret;
 }
