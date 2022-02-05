@@ -1,7 +1,7 @@
-import { BasicCourseInformation } from "./course";
+import { BasicCourseInformation } from "./course.js";
 import { parse as parseDate } from "date-format-parse";
-import { checkError } from "./utils";
-import { Device } from "./device";
+import { checkError } from "./utils.js";
+import { Device } from "./device.js";
 
 export type PermanentMark = {
     name: string,
@@ -9,7 +9,6 @@ export type PermanentMark = {
     mark: string,
     /** The date of the exam as Unix epoch */
     date: number,
-    state: string,
 }
 
 export type ProvisionalMark = {
@@ -56,11 +55,11 @@ export async function getCoursesInfo(device: Device): Promise<CoursesInfo> {
                 num_credits: s.n_cfe,
                 mark: s.desc_voto,
                 date: parseDate(s.d_esame, "DD/MM/YYYY").getTime(),
-                state: s.esplica_efi,
             } as PermanentMark)),
             provisional: provisional_data.data.valutazioni_provvisorie.map(v => ({
                 name: v.NOME_INS,
                 mark: v.VOTO_ESAME,
+                date: parseDate(v.DATA_ESAME, "DD-MM-YYYY").getTime(),
                 failed: v.FALLITO == "S",
                 absent: v.ASSENTE == "S",
                 state: v.STATO,

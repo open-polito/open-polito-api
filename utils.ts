@@ -1,5 +1,12 @@
 import fetch from "isomorphic-unfetch";
 
+export type APIResponse = {
+    data: any,
+    esito: {
+        [context: string]: { stato: number, error?: string }
+    }
+};
+
 /**
  * Makes a POST request to an API endpoint.
  * 
@@ -14,7 +21,7 @@ import fetch from "isomorphic-unfetch";
  * 
  * @returns An arbitrary object
  */
-export async function post(base_url: string, endpoint: string, data: {[key: string]: any}, timeout: number = 3000): Promise<any> {
+export async function post(base_url: string, endpoint: string, data: {[key: string]: any}, timeout: number = 3000): Promise<APIResponse> {
     // Handles timeouts in fetch(). https://www.npmjs.com/package/node-fetch#request-cancellation-with-abortsignal
     const controller = new AbortController();
     const timeoutFn = setTimeout(() => {
@@ -54,10 +61,12 @@ export async function ping(base_url = "https://app.didattica.polito.it/"): Promi
  * 
  * @internal
  */
-export function checkError(data: {esito: object}) {
-    for (const key in data.esito)
-        if (data.esito[key].stato < 0)
-            throw new UpstreamError(data.esito[key].error, data.esito[key].stato);
+export function checkError(data: APIResponse) {
+    for (const key in data.esito) {
+        const context = data.esito[key]!!
+        if (context.stato < 0)
+            throw new UpstreamError(context.error!, context.stato);
+    }
 }
 
 /**

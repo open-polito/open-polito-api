@@ -1,5 +1,5 @@
-import { checkError } from "./utils";
-import { Device } from "./device";
+import { checkError } from "./utils.js";
+import { Device } from "./device.js";
 
 export type PersonalData = {
     /**

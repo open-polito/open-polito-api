@@ -1,7 +1,7 @@
-import { Device } from "./device";
-import { checkError } from "./utils";
+import { Device } from "./device.js";
+import { checkError } from "./utils.js";
 import { parse as parseDate } from "date-format-parse"
-import { MaterialItem, parseMaterial } from "./material";
+import { MaterialItem, parseMaterial } from "./material.js";
 
 /** A recording of a lesson (either in-class or over Zoom/BBB) */
 export type Recording = {
@@ -120,9 +120,9 @@ export async function getExtendedCourseInformation(device: Device, course: Basic
             : { incarico: course.id_incarico });
     checkError(data);
 
-    const year_parts = data.info_corso.periodo.split("-");
+    const year_parts = data.data.info_corso.periodo.split("-");
     if (year_parts.length != 2)
-        throw new Error(`Unexpected value for info_corso.periodo: "${data.info_corso.periodo}"`);
+        throw new Error(`Unexpected value for info_corso.periodo: "${data.data.info_corso.periodo}"`);
     const ret: CourseInformation = {
         degree_year: year_parts[0],
         year_period: year_parts[1],

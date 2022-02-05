@@ -1,11 +1,11 @@
-import { getBookings, getSlots } from "../booking";
-import { getExtendedCourseInformation } from "../course";
-import { getCoursesInfo } from "../courses";
-import { Device } from "../device";
-import { getDownloadURL } from "../material";
-import { getTimetable } from "../timetable";
-import { getUnreadMail } from "../user";
-import { ping } from "../utils";
+import { getBookings, getSlots } from "../booking.js";
+import { getExtendedCourseInformation } from "../course.js";
+import { getCoursesInfo } from "../courses.js";
+import { Device } from "../device.js";
+import { getDownloadURL } from "../material.js";
+import { getTimetable } from "../timetable.js";
+import { getUnreadMail } from "../user.js";
+import { ping } from "../utils.js";
 
 const device = new Device("ea27a150-39d5-4f6a-ae1e-51f38bfe0039");
 (async () => {

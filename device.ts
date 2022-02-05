@@ -1,5 +1,5 @@
-import { checkError, post } from "./utils";
-import { PersonalData } from "./user";
+import { APIResponse, checkError, post } from "./utils.js";
+import { PersonalData } from "./user.js";
 
 export type DeviceData = {
     platform: string,
@@ -140,7 +140,7 @@ export class Device {
     }
 
     /** Sends a raw API request, appending the device credentials */
-    async post(endpoint: string, data: { [key: string]: any }): Promise<any> {
+    async post(endpoint: string, data: { [key: string]: any }): Promise<APIResponse> {
         const response = await post(this.base_url, endpoint, Object.assign({ regID: this.uuid, token: this.token! }, data), this.timeout);
         this.request_logger({
             endpoint,
