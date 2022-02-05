@@ -6,6 +6,7 @@
   "license": "AGPL-3.0-or-later",
   "type": "module",
   "scripts": {
+    "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "make-docs": "cd docs/ && npm run build"
   },
@@ -27,7 +28,9 @@
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
+    "@react-native-community/eslint-config": "^3.0.1",
     "@types/node": "^16.10.2",
-    "@types/node-fetch": "^3.0.3"
+    "@types/node-fetch": "^3.0.3",
+    "eslint": "^7.32.0"
   }
 }
