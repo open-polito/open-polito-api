@@ -6,8 +6,11 @@ export type Notification = {
     id: number
     title: string
     body: string | null
+    /** The category of this notification (eg. official reminder, professor notice, etc) */
     topic: string
-    time: Date
+    /** The time when this notification was created, as Unix epoch */
+    time: number
+    /** Whether the user read this notification from the official app or via {@link markNotificationRead} */
     is_read: boolean
 }
 
@@ -25,7 +28,7 @@ export async function getNotifications(device: Device): Promise<Notification[]> 
             title: m.title,
             body: m.msg,
             topic: m.transazione,
-            time: parseDate(m.time_proc, "YYYY/MM/DD hh:mm:ss"),
+            time: parseDate(m.time_proc, "YYYY/MM/DD hh:mm:ss").getTime(),
             is_read: m.is_read,
         }
         if (ret.topic == "avvisidoc" || ret.topic == "matdid") {
