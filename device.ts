@@ -32,6 +32,8 @@ export class Device {
 	request_logger: RequestLogger;
 	/** The base URL for the API */
 	base_url: string;
+	/** The device version (required for notifications) */
+	version: string;
 
 	/**
 	 * @param uuid A unique identifier for the device
@@ -68,6 +70,7 @@ export class Device {
 			response: register_data,
 		});
 		checkError(register_data);
+		this.version = deviceData.version;
 	}
 
 	/**
