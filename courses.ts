@@ -47,6 +47,8 @@ export async function getCoursesInfo(device: Device): Promise<CoursesInfo> {
 	checkError(vote_data);
 	const provisional_data = await device.post("valutazioni.php", {});
 	checkError(provisional_data);
+	let extra_courses: any[] = [];
+	Object.keys(vote_data.data.altri_corsi).forEach(year => extra_courses.push(...vote_data.data.altri_corsi[year]));
 
 	return {
 		marks: {
@@ -76,15 +78,13 @@ export async function getCoursesInfo(device: Device): Promise<CoursesInfo> {
 				category: c.categoria,
 				overbooking: c.overbooking !== "N",
 			}) as BasicCourseInfo),
-			extra: Object.keys(vote_data.data.altri_corsi)
-				.map(year => vote_data.data.altri_corsi[year])
-				.map(c => ({
-					name: c.nome_ins_1,
-					code: c.cod_ins,
-					num_credits: c.n_cfe,
-					id_incarico: c.id_inc_1,
-					overbooking: false,
-				}) as BasicCourseInfo) || [],
+			extra: extra_courses.map(c => ({
+				name: c.nome_ins_1,
+				code: c.cod_ins,
+				num_credits: c.n_cfe,
+				id_incarico: c.id_inc_1,
+				overbooking: false,
+			}) as BasicCourseInfo) || [],
 		},
 	};
 }
