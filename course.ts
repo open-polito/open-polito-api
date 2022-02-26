@@ -91,8 +91,8 @@ export type CourseInfo = {
 	 * The value 1 represents the first year of both BSc and MSc courses.
 	 */
 	degree_year: number
-	/** The teaching period (it: periodo didattico) when this course takes place (1 or 2) */
-	year_period: number
+	/** The teaching period (it: periodo didattico) when this course takes place (1 or 2, or null if this field is not relevant) */
+	year_period: number | null
 	professor: {
 		name: string,
 		surname: string
@@ -134,12 +134,13 @@ export async function getExtendedCourseInfo(device: Device, course: BasicCourseI
 			: { incarico: course.id_incarico });
 	checkError(data);
 
+	// The string may be either "1" (eg. year-long extra courses) or "1-1".
 	const year_parts = data.data.info_corso.periodo.split("-");
-	if (year_parts.length != 2)
+	if (year_parts.length > 2)
 		throw new Error(`Unexpected value for info_corso.periodo: "${data.data.info_corso.periodo}"`);
 	const ret: CourseInfo = {
 		degree_year: year_parts[0],
-		year_period: year_parts[1],
+		year_period: (year_parts.length > 1) ? year_parts[1] : null,
 		calendar_year: data.data.info_corso.a_acc,
 		professor: {
 			name: data.data.info_corso.nome_doce,
