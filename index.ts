@@ -5,6 +5,7 @@ export * as device from "./device.js";
 export * as exam_sessions from "./exam_sessions.js";
 export * as material from "./material.js";
 export * as notifications from "./notifications.js";
+export * as tickets from "./tickets.js"
 export * as timetable from "./timetable.js";
 export * as user from "./user.js";
 export * as utils from "./utils.js";
