@@ -77,7 +77,7 @@ export async function getCoursesInfo(device: Device): Promise<CoursesInfo> {
 				overbooking: c.overbooking !== "N",
 			}) as BasicCourseInfo),
 			extra: Object.keys(vote_data.data.altri_corsi)
-				.map(year => vote_data.data.altri_corsi[year])
+				.flatMap(year => vote_data.data.altri_corsi[year])
 				.map(c => ({
 					name: c.nome_ins_1,
 					code: c.cod_ins,

@@ -3,7 +3,6 @@ export * as corso from "./course.js";
 export * as courses from "./courses.js";
 export * as device from "./device.js";
 export * as exam_sessions from "./exam_sessions.js";
-export * as index from "./index.js";
 export * as material from "./material.js";
 export * as notifications from "./notifications.js";
 export * as timetable from "./timetable.js";
