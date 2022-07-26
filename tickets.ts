@@ -30,33 +30,36 @@ export type Ticket = {
 }
 
 function parseTicket(data: any): Ticket {
-    return {
-        id: data.id,
-        title: data.oggetto,
-        description: data.descrizione,
-        creation_date: data.dataApertura,
-        last_updated: data.dataAggiornamento,
-        state: data.idStato,
-        unread: data.countnonlette,
-    };
+	return {
+		id: data.id,
+		title: data.oggetto,
+		description: data.descrizione,
+		creation_date: data.dataApertura,
+		last_updated: data.dataAggiornamento,
+		state: data.idStato,
+		unread: data.countnonlette,
+	};
 }
 
 /**
+ * @param device
  * @returns The list of tickets for the user.
  */
 export async function getTickets(device: Device): Promise<Ticket[]> {
-    const data = await device.post("ticket.php", { operazione: "getListaTicket" });
-    checkError(data);
-    return data.data.ticket.map(item => parseTicket(item));
+	const data = await device.post("ticket.php", { operazione: "getListaTicket" });
+	checkError(data);
+	return data.data.ticket.map(item => parseTicket(item));
 }
 
 /**
+ * @param device
+ * @param ticket_id
  * @returns Details about the given ticket.
  */
 export async function getTicket(device: Device, ticket_id: number): Promise<Ticket> {
-    const data = await device.post("ticket.php", { operazione: "getTicket", id_ticket: ticket_id });
-    checkError(data);
-    return parseTicket(data.data.ticket);
+	const data = await device.post("ticket.php", { operazione: "getTicket", id_ticket: ticket_id });
+	checkError(data);
+	return parseTicket(data.data.ticket);
 }
 
 /**
@@ -67,6 +70,6 @@ export async function getTicket(device: Device, ticket_id: number): Promise<Tick
  * @param text The HTML text of the reply (must use <br> for newlines)
  */
 export async function replyToTicket(device: Device, ticket_id: number, text: string): Promise<void> {
-    const data = await device.post("ticket.php", { operazione: "sendRisposta", testo: text, id_ticket: ticket_id });
-    checkError(data);
+	const data = await device.post("ticket.php", { operazione: "sendRisposta", testo: text, id_ticket: ticket_id });
+	checkError(data);
 }

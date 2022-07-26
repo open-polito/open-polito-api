@@ -7,8 +7,10 @@ import { getTicket, getTickets } from "../tickets.js";
 import { getTimetable } from "../timetable.js";
 import { getUnreadMail } from "../user.js";
 import { ping } from "../utils.js";
+import { v4 as uuidv4 } from "uuid";
 
-const device = new Device("ea27a150-39d5-4f6a-ae1e-51f38bfe0039");
+const uuid = uuidv4();
+const device = new Device(uuid);
 (async () => {
 	await ping();
 	await device.register();
