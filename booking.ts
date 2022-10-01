@@ -70,6 +70,7 @@ export type Booking = {
 	end_time: number
 	/** @example "01PECQW" (only for lessons) */
 	course_id?: string
+	course_name?: string
 }
 
 /**
@@ -103,6 +104,7 @@ export async function getBookings(device: Device): Promise<Booking[]> {
 			const lesson = matches[1];
 			const parts = lesson.split(" ");
 			ret.course_id = parts[parts.length - 1];
+			ret.course_name = lesson.replace(ret.course_id, "").trim();
 		}
 		return ret;
 	});
