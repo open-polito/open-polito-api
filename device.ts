@@ -1,5 +1,5 @@
-import { APIResponse, checkError, post } from "./utils.js";
-import { PersonalData } from "./user.js";
+import { APIResponse, checkError, post } from "./utils";
+import { PersonalData } from "./user";
 
 export type DeviceData = {
 	platform: string,

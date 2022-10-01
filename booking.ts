@@ -1,5 +1,5 @@
-import { Device } from "./device.js";
-import { checkError } from "./utils.js";
+import { Device } from "./device";
+import { checkError } from "./utils";
 import { parse as parseDate } from "date-format-parse";
 
 export type BookingContextID = "AULE_STUDIO" | "LEZIONI" | string

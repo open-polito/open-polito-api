@@ -1,7 +1,7 @@
-import { Device } from "./device.js";
-import { checkError } from "./utils.js";
+import { Device } from "./device";
+import { checkError } from "./utils";
 import { parse as parseDate } from "date-format-parse";
-import { MaterialItem, parseMaterial } from "./material.js";
+import { MaterialItem, parseMaterial } from "./material";
 
 /** A recording of a lesson (either in-class or over Zoom/BBB) */
 export type Recording = {
