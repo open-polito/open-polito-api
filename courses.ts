@@ -1,7 +1,7 @@
-import { BasicCourseInfo } from "./course.js";
+import { BasicCourseInfo } from "./course";
 import { parse as parseDate } from "date-format-parse";
-import { checkError } from "./utils.js";
-import { Device } from "./device.js";
+import { checkError } from "./utils";
+import { Device } from "./device";
 
 export type PermanentMark = {
 	name: string,
