@@ -1,12 +1,12 @@
-import { getBookings, getSlots } from "../booking.js";
-import { getExtendedCourseInfo } from "../course.js";
-import { getCoursesInfo } from "../courses.js";
-import { Device } from "../device.js";
-import { getDownloadURL } from "../material.js";
-import { getTicket, getTickets } from "../tickets.js";
-import { getTimetable } from "../timetable.js";
-import { getUnreadMail } from "../user.js";
-import { ping } from "../utils.js";
+import { getBookings, getSlots } from "../booking";
+import { getExtendedCourseInfo } from "../course";
+import { getCoursesInfo } from "../courses";
+import { Device } from "../device";
+import { getDownloadURL } from "../material";
+import { getTicket, getTickets } from "../tickets";
+import { getTimetable } from "../timetable";
+import { getUnreadMail } from "../user";
+import { ping } from "../utils";
 import { v4 as uuidv4 } from "uuid";
 
 const uuid = uuidv4();
